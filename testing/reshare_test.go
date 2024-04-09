@@ -2,6 +2,7 @@ package testing
 
 import (
 	spec "dkg-spec"
+	"dkg-spec/crypto"
 	"dkg-spec/testing/fixtures"
 	"testing"
 
@@ -9,6 +10,7 @@ import (
 )
 
 func TestValidateReshare(t *testing.T) {
+	crypto.InitBLS()
 	t.Run("valid 4 operators", func(t *testing.T) {
 		require.NoError(t, spec.ValidateReshareMessage(
 			&fixtures.TestReshare4Operators,

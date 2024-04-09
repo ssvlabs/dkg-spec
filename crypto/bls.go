@@ -5,6 +5,11 @@ import (
 	"github.com/herumi/bls-eth-go-binary/bls"
 )
 
+func InitBLS() {
+	_ = bls.Init(bls.BLS12_381)
+	_ = bls.SetETHmode(bls.EthModeDraft07)
+}
+
 // RecoverValidatorPublicKey recovers a BLS master public key (validator pub key) from provided partial pub keys
 func RecoverValidatorPublicKey(ids []uint64, sharePks []*bls.PublicKey) (*bls.PublicKey, error) {
 	if len(ids) != len(sharePks) {

@@ -108,6 +108,7 @@ func EncodedOperatorPK(str string) []byte {
 }
 
 func ShareSK(str string) *bls.SecretKey {
+	crypto.InitBLS()
 	ret := &bls.SecretKey{}
 	err := ret.SetHexString(str)
 	if err != nil {
