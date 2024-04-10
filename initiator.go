@@ -13,6 +13,7 @@ import (
 	eth_crypto "github.com/ethereum/go-ethereum/crypto"
 )
 
+// RunDKG is called when an initiator wants to start a new DKG ceremony
 func RunDKG(init *Init) ([]*Result, error) {
 	if err := ValidateInitMessage(init); err != nil {
 		return nil, err

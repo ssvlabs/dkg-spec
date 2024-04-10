@@ -42,9 +42,6 @@ func ComputeDepositMessageSigningRoot(network core.Network, message *phase0.Depo
 	if !eth1deposit.IsSupportedDepositNetwork(network) {
 		return phase0.Root{}, fmt.Errorf("network %s is not supported", network)
 	}
-	if len(message.WithdrawalCredentials) != 32 {
-		return phase0.Root{}, fmt.Errorf("withdrawal credentials must be 32 bytes")
-	}
 
 	// Compute DepositMessage root.
 	depositMsgRoot, err := message.HashTreeRoot()
