@@ -24,22 +24,46 @@ func TestETH1WithdrawalCredentials(t *testing.T) {
 func TestComputeDepositMessageSigningRoot(t *testing.T) {
 	t.Run("mainnet", func(t *testing.T) {
 		r, err := ComputeDepositMessageSigningRoot(core.MainNetwork, &phase0.DepositMessage{
-			PublicKey:             phase0.BLSPubKey{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			WithdrawalCredentials: []byte{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
+			PublicKey:             phase0.BLSPubKey([]byte{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}),
+			WithdrawalCredentials: ETH1WithdrawalCredentials([]byte{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}),
 			Amount:                32000000000,
 		})
 		require.NoError(t, err)
-		require.EqualValues(t, r, phase0.Root{211, 144, 58, 131, 8, 179, 69, 74, 17, 237, 153, 158, 78, 44, 172, 234, 232, 39, 24, 173, 42, 18, 85, 227, 114, 63, 250, 196, 225, 17, 32, 43})
+		require.EqualValues(t, r, phase0.Root{65, 251, 162, 3, 213, 126, 91, 235, 147, 143, 240, 158, 49, 73, 43, 224, 197, 115, 203, 211, 216, 164, 112, 192, 1, 34, 88, 168, 155, 185, 59, 156})
 	})
 
 	t.Run("holesky", func(t *testing.T) {
 		r, err := ComputeDepositMessageSigningRoot(core.HoleskyNetwork, &phase0.DepositMessage{
-			PublicKey:             phase0.BLSPubKey{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			WithdrawalCredentials: []byte{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
+			PublicKey:             phase0.BLSPubKey([]byte{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}),
+			WithdrawalCredentials: ETH1WithdrawalCredentials([]byte{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}),
 			Amount:                32000000000,
 		})
 		require.NoError(t, err)
-		require.EqualValues(t, r, phase0.Root{111, 233, 230, 111, 196, 39, 220, 136, 221, 175, 70, 138, 111, 71, 122, 69, 253, 137, 184, 240, 13, 124, 138, 43, 88, 250, 240, 100, 95, 162, 232, 111})
+		require.EqualValues(t, r, phase0.Root{69, 0, 246, 46, 94, 170, 246, 64, 34, 97, 251, 181, 210, 250, 187, 64, 43, 220, 229, 196, 72, 92, 164, 213, 123, 170, 99, 7, 22, 67, 87, 55})
+	})
+}
+
+func TestDepositDataRootForFork(t *testing.T) {
+	t.Run("mainnet", func(t *testing.T) {
+		r, err := DepositDataRootForFork(
+			phase0.Version{0, 0, 0, 0},
+			[]byte{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			[]byte{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
+			32000000000,
+		)
+		require.NoError(t, err)
+		require.EqualValues(t, r, phase0.Root{65, 251, 162, 3, 213, 126, 91, 235, 147, 143, 240, 158, 49, 73, 43, 224, 197, 115, 203, 211, 216, 164, 112, 192, 1, 34, 88, 168, 155, 185, 59, 156})
+	})
+
+	t.Run("holesky", func(t *testing.T) {
+		r, err := DepositDataRootForFork(
+			phase0.Version{0x01, 0x01, 0x70, 0x00},
+			[]byte{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			[]byte{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
+			32000000000,
+		)
+		require.NoError(t, err)
+		require.EqualValues(t, r, phase0.Root{69, 0, 246, 46, 94, 170, 246, 64, 34, 97, 251, 181, 210, 250, 187, 64, 43, 220, 229, 196, 72, 92, 164, 213, 123, 170, 99, 7, 22, 67, 87, 55})
 	})
 }
 

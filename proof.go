@@ -2,28 +2,9 @@ package spec
 
 import (
 	"bytes"
-	"crypto/rsa"
 	"dkg-spec/crypto"
 	"fmt"
 )
-
-// SignCeremonyProof returns a signed ceremomy proof
-func SignCeremonyProof(sk *rsa.PrivateKey, proof *Proof) (*SignedProof, error) {
-	hash, err := proof.HashTreeRoot()
-	if err != nil {
-		return nil, err
-	}
-
-	sig, err := crypto.SignRSA(sk, hash[:])
-	if err != nil {
-		return nil, err
-	}
-
-	return &SignedProof{
-		Proof:     proof,
-		Signature: sig,
-	}, nil
-}
 
 func ValidateCeremonyProof(
 	ownerAddress [20]byte,

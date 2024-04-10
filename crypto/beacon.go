@@ -94,3 +94,19 @@ func VerifyDepositData(network core.Network, depositData *phase0.DepositData) er
 	}
 	return nil
 }
+
+func DepositDataRootForFork(
+	fork [4]byte,
+	validatorPK []byte,
+	withdrawalCredentials []byte,
+	amount phase0.Gwei,
+) (phase0.Root, error) {
+	network, err := GetNetworkByFork(fork)
+	if err != nil {
+		return phase0.Root{}, err
+	}
+	return ComputeDepositMessageSigningRoot(network, &phase0.DepositMessage{
+		PublicKey:             phase0.BLSPubKey(validatorPK),
+		Amount:                amount,
+		WithdrawalCredentials: ETH1WithdrawalCredentials(withdrawalCredentials)})
+}

@@ -187,14 +187,19 @@ func VerifyPartialSignatures(
 	return nil
 }
 
+// PartialNonceRoot returns root for singing owner nonce
+func PartialNonceRoot(address common.Address, nonce uint64) []byte {
+	data := fmt.Sprintf("%s:%d", address.String(), nonce)
+	return eth_crypto.Keccak256([]byte(data))
+}
+
 func VerifyPartialNonceSignatures(
 	ownerAddress [20]byte,
 	nonce uint64,
 	sigs []*bls.Sign,
 	pks []*bls.PublicKey,
 ) error {
-	data := fmt.Sprintf("%s:%d", common.Address(ownerAddress).String(), nonce)
-	hash := eth_crypto.Keccak256([]byte(data))
+	hash := PartialNonceRoot(ownerAddress, nonce)
 
 	// Verify partial signatures and recovered threshold signature
 	err := crypto.VerifyPartialSigs(sigs, pks, hash)
