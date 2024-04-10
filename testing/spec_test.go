@@ -39,10 +39,11 @@ func TestVerifySignedReshare(t *testing.T) {
 		sig, err := eth_crypto.Sign(hash[:], sk)
 		require.NoError(t, err)
 
-		require.NoError(t, spec.VerifySignedReshare(stubClient, &spec.SignedReshare{
-			Reshare:   reshare,
-			Signature: sig,
-		}))
+		require.NoError(t, spec.VerifySignedMessageByOwner(stubClient,
+			address,
+			&reshare,
+			sig,
+		))
 	})
 
 	t.Run("invalid EOA signature", func(t *testing.T) {
@@ -69,10 +70,10 @@ func TestVerifySignedReshare(t *testing.T) {
 		sig, err := eth_crypto.Sign(hash[:], sk)
 		require.NoError(t, err)
 
-		require.EqualError(t, spec.VerifySignedReshare(stubClient, &spec.SignedReshare{
-			Reshare:   reshare,
-			Signature: sig,
-		}), "invalid signed reshare signature")
+		require.EqualError(t, spec.VerifySignedMessageByOwner(stubClient,
+			fixtures.TestOwnerAddress,
+			&reshare,
+			sig), "invalid signed reshare signature")
 	})
 
 	t.Run("valid contract signature", func(t *testing.T) {
@@ -106,10 +107,10 @@ func TestVerifySignedReshare(t *testing.T) {
 		sig, err := eth_crypto.Sign(hash[:], sk)
 		require.NoError(t, err)
 
-		require.NoError(t, spec.VerifySignedReshare(stubClient, &spec.SignedReshare{
-			Reshare:   reshare,
-			Signature: sig,
-		}))
+		require.NoError(t, spec.VerifySignedMessageByOwner(stubClient,
+			address,
+			&reshare,
+			sig))
 	})
 
 	t.Run("invalid contract signature", func(t *testing.T) {
@@ -143,9 +144,9 @@ func TestVerifySignedReshare(t *testing.T) {
 		sig, err := eth_crypto.Sign(hash[:], sk)
 		require.NoError(t, err)
 
-		require.EqualError(t, spec.VerifySignedReshare(stubClient, &spec.SignedReshare{
-			Reshare:   reshare,
-			Signature: sig,
-		}), "signature invalid")
+		require.EqualError(t, spec.VerifySignedMessageByOwner(stubClient,
+			address,
+			&reshare,
+			sig), "signature invalid")
 	})
 }

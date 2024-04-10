@@ -31,6 +31,10 @@ type Reshare struct {
 	OldT uint64
 	// NewT is the old threshold for signing
 	NewT uint64
+	// Fork ethereum fork for signing
+	Fork [4]byte `ssz-size:"4"`
+	// WithdrawalCredentials for deposit data
+	WithdrawalCredentials []byte `ssz-max:"32"`
 	// Owner address
 	Owner [20]byte `ssz-size:"20"`
 	// Owner nonce
@@ -39,6 +43,25 @@ type Reshare struct {
 
 type SignedReshare struct {
 	Reshare Reshare
+	// Signature is an ECDSA signature over proof
+	Signature []byte `ssz-max:"1536"` // 64 * 24
+}
+
+type Resign struct {
+	// ValidatorPubKey public key corresponding to the shared private key
+	ValidatorPubKey []byte `ssz-size:"48"`
+	// Fork ethereum fork for signing
+	Fork [4]byte `ssz-size:"4"`
+	// WithdrawalCredentials for deposit data
+	WithdrawalCredentials []byte `ssz-max:"32"`
+	// Owner address
+	Owner [20]byte `ssz-size:"20"`
+	// Owner nonce
+	Nonce uint64
+}
+
+type SignedResign struct {
+	Resign Resign
 	// Signature is an ECDSA signature over proof
 	Signature []byte `ssz-max:"1536"` // 64 * 24
 }

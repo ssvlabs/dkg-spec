@@ -5,6 +5,7 @@ import (
 	"context"
 	"dkg-spec/eip1271"
 	"fmt"
+	ssz "github.com/ferranbt/fastssz"
 	"github.com/google/uuid"
 	"math/big"
 
@@ -45,10 +46,13 @@ func RunReshare(
 	proofs map[*Operator]SignedProof,
 	client eip1271.ETHClient,
 ) ([]*Result, error) {
-	if err := VerifySignedReshare(client, signedReshare); err != nil {
+	if err := VerifySignedMessageByOwner(
+		client,
+		signedReshare.Reshare.Owner,
+		signedReshare,
+		signedReshare.Signature); err != nil {
 		return nil, err
 	}
-
 	if err := ValidateReshareMessage(&signedReshare.Reshare, proofs); err != nil {
 		return nil, err
 	}
@@ -71,27 +75,32 @@ func RunReshare(
 	return results, err
 }
 
-// VerifySignedReshare returns nil if signature over re-share message is valid
-func VerifySignedReshare(client eip1271.ETHClient, signedReshare *SignedReshare) error {
-	isEOASignature, err := IsEOAAccount(client, signedReshare.Reshare.Owner)
+// VerifySignedMessageByOwner returns nil if signature over message is valid (signed by owner)
+func VerifySignedMessageByOwner(
+	client eip1271.ETHClient,
+	owner [20]byte,
+	msg ssz.HashRoot,
+	signature []byte,
+) error {
+	isEOASignature, err := IsEOAAccount(client, owner)
 	if err != nil {
 		return err
 	}
 
-	hash, err := signedReshare.Reshare.HashTreeRoot()
+	hash, err := msg.HashTreeRoot()
 	if err != nil {
 		return err
 	}
 
 	if isEOASignature {
-		pk, err := eth_crypto.SigToPub(hash[:], signedReshare.Signature)
+		pk, err := eth_crypto.SigToPub(hash[:], signature)
 		if err != nil {
 			return err
 		}
 
 		address := eth_crypto.PubkeyToAddress(*pk)
 
-		if common.Address(signedReshare.Reshare.Owner).Cmp(address) != 0 {
+		if common.Address(owner).Cmp(address) != 0 {
 			return fmt.Errorf("invalid signed reshare signature")
 		}
 	} else {
@@ -99,13 +108,13 @@ func VerifySignedReshare(client eip1271.ETHClient, signedReshare *SignedReshare)
 		// gnosis implementation https://github.com/safe-global/safe-smart-account/blob/2278f7ccd502878feb5cec21dd6255b82df374b5/contracts/Safe.sol#L265
 		// https://github.com/safe-global/safe-smart-account/blob/main/docs/signatures.md
 		// ... verify via contract call
-		signerVerification, err := eip1271.NewEip1271(signedReshare.Reshare.Owner, client)
+		signerVerification, err := eip1271.NewEip1271(owner, client)
 		if err != nil {
 			return err
 		}
 		res, err := signerVerification.IsValidSignature(&bind.CallOpts{
 			Context: context.Background(),
-		}, hash[:], signedReshare.Signature)
+		}, hash[:], signature)
 		if err != nil {
 			return err
 		}
