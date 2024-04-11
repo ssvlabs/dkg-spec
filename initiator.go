@@ -16,10 +16,6 @@ import (
 
 // RunDKG is called when an initiator wants to start a new DKG ceremony
 func RunDKG(init *Init) ([]*Result, error) {
-	if err := ValidateInitMessage(init); err != nil {
-		return nil, err
-	}
-
 	id := NewID()
 
 	var results []*Result
@@ -53,10 +49,6 @@ func RunReshare(
 		signedReshare.Signature); err != nil {
 		return nil, err
 	}
-	if err := ValidateReshareMessage(&signedReshare.Reshare, proofs); err != nil {
-		return nil, err
-	}
-
 	id := NewID()
 
 	var results []*Result

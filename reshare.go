@@ -3,25 +3,20 @@ package spec
 import (
 	"fmt"
 	"sort"
-
-	"golang.org/x/exp/maps"
 )
 
 // ValidateReshareMessage returns nil if re-share message is valid
 func ValidateReshareMessage(
 	reshare *Reshare,
-	proofs map[*Operator]SignedProof,
+	operator *Operator,
+	proof *SignedProof,
 ) error {
 	if !UniqueAndOrderedOperators(reshare.OldOperators) {
 		return fmt.Errorf("old operators are not unique and ordered")
 	}
-	if !EqualOperators(reshare.OldOperators, OrderOperators(maps.Keys(proofs))) {
-		return fmt.Errorf("missing operator proofs")
-	}
-	for operator, proof := range proofs {
-		if err := ValidateCeremonyProof(reshare.Owner, reshare.ValidatorPubKey, operator, proof); err != nil {
-			return err
-		}
+
+	if err := ValidateCeremonyProof(reshare.Owner, reshare.ValidatorPubKey, operator, *proof); err != nil {
+		return err
 	}
 
 	if !UniqueAndOrderedOperators(reshare.NewOperators) {

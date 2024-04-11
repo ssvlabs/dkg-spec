@@ -72,9 +72,9 @@ func OperatorInit(
 // OperatorReshare is called when an operator receives a reshare message
 func OperatorReshare(
 	signedReshare *SignedReshare,
-	proofs map[*Operator]SignedProof,
+	operator *Operator,
+	proof *SignedProof,
 	requestID [24]byte,
-	operatorID uint64,
 	sk *rsa.PrivateKey,
 	client eip1271.ETHClient,
 ) (*Result, error) {
@@ -86,7 +86,7 @@ func OperatorReshare(
 	); err != nil {
 		return nil, err
 	}
-	if err := ValidateReshareMessage(&signedReshare.Reshare, proofs); err != nil {
+	if err := ValidateReshareMessage(&signedReshare.Reshare, operator, proof); err != nil {
 		return nil, err
 	}
 
@@ -97,11 +97,70 @@ func OperatorReshare(
 		T out of old participants must participate
 	*/
 
+	return BuildResult(
+		operator.ID,
+		requestID,
+		share,
+		sk,
+		signedReshare.Reshare.ValidatorPubKey,
+		signedReshare.Reshare.Owner,
+		signedReshare.Reshare.WithdrawalCredentials,
+		signedReshare.Reshare.Fork,
+		signedReshare.Reshare.Nonce,
+	)
+}
+
+// OperatorResign is called when an operator receives a re-sign message
+func OperatorResign(
+	signedResign *SignedResign,
+	operator *Operator,
+	proof *SignedProof,
+	requestID [24]byte,
+	share *bls.SecretKey,
+	sk *rsa.PrivateKey,
+	client eip1271.ETHClient,
+) (*Result, error) {
+	if err := VerifySignedMessageByOwner(
+		client,
+		signedResign.Resign.Owner,
+		signedResign,
+		signedResign.Signature,
+	); err != nil {
+		return nil, err
+	}
+	if err := ValidateResignMessage(&signedResign.Resign, operator, proof); err != nil {
+		return nil, err
+	}
+
+	return BuildResult(
+		operator.ID,
+		requestID,
+		share,
+		sk,
+		signedResign.Resign.ValidatorPubKey,
+		signedResign.Resign.Owner,
+		signedResign.Resign.WithdrawalCredentials,
+		signedResign.Resign.Fork,
+		signedResign.Resign.Nonce,
+	)
+}
+
+func BuildResult(
+	operatorID uint64,
+	requestID [24]byte,
+	share *bls.SecretKey,
+	sk *rsa.PrivateKey,
+	validatorPK []byte,
+	owner [20]byte,
+	withdrawalCredentials []byte,
+	fork [4]byte,
+	nonce uint64,
+) (*Result, error) {
 	// sign deposit data
 	depositDataRoot, err := crypto.DepositDataRootForFork(
-		signedReshare.Reshare.Fork,
-		signedReshare.Reshare.ValidatorPubKey,
-		signedReshare.Reshare.WithdrawalCredentials,
+		fork,
+		validatorPK,
+		withdrawalCredentials,
 		crypto.MaxEffectiveBalanceInGwei,
 	)
 	if err != nil {
@@ -114,13 +173,13 @@ func OperatorReshare(
 	if err != nil {
 		return nil, err
 	}
-	proof := &Proof{
-		ValidatorPubKey: signedReshare.Reshare.ValidatorPubKey,
+	newProof := &Proof{
+		ValidatorPubKey: validatorPK,
 		EncryptedShare:  encryptedShare,
 		SharePubKey:     share.GetPublicKey().Serialize(),
-		Owner:           signedReshare.Reshare.Owner,
+		Owner:           owner,
 	}
-	byts, err := proof.MarshalSSZ()
+	byts, err := newProof.MarshalSSZ()
 	if err != nil {
 		return nil, err
 	}
@@ -133,31 +192,10 @@ func OperatorReshare(
 		OperatorID:                 operatorID,
 		RequestID:                  requestID,
 		DepositPartialSignature:    depositDataSig.Serialize(),
-		OwnerNoncePartialSignature: share.SignByte(PartialNonceRoot(signedReshare.Reshare.Owner, signedReshare.Reshare.Nonce)).Serialize(),
+		OwnerNoncePartialSignature: share.SignByte(PartialNonceRoot(owner, nonce)).Serialize(),
 		SignedProof: SignedProof{
-			Proof:     proof,
+			Proof:     newProof,
 			Signature: proofSig,
 		},
 	}, nil
-}
-
-// OperatorResign is called when an operator receives a resign message
-func OperatorResign(
-	signedResign *SignedResign,
-	proofs map[*Operator]SignedProof,
-	client eip1271.ETHClient,
-) (*Result, error) {
-	if err := VerifySignedMessageByOwner(
-		client,
-		signedResign.Resign.Owner,
-		signedResign,
-		signedResign.Signature,
-	); err != nil {
-		return nil, err
-	}
-	if err := ValidateResignMessage(&signedResign.Resign, proofs); err != nil {
-		return nil, err
-	}
-
-	return nil, nil
 }
