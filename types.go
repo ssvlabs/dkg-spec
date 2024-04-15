@@ -71,7 +71,7 @@ type Result struct {
 	// Operator ID
 	OperatorID uint64
 	// RequestID for the DKG instance (not used for signing)
-	RequestID [24]byte
+	RequestID [24]byte `ssz-size:"24"`
 	// Partial Operator Signature of Deposit data
 	DepositPartialSignature []byte `ssz-size:"96"`
 	// SSV owner + nonce signature
