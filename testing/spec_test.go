@@ -1,12 +1,13 @@
 package testing
 
 import (
-	spec "dkg-spec"
-	"dkg-spec/eip1271"
-	"dkg-spec/testing/fixtures"
-	"dkg-spec/testing/stubs"
-	"github.com/ethereum/go-ethereum"
 	"testing"
+
+	spec "github.com/bloxapp/dkg-spec"
+	"github.com/bloxapp/dkg-spec/eip1271"
+	"github.com/bloxapp/dkg-spec/testing/fixtures"
+	"github.com/bloxapp/dkg-spec/testing/stubs"
+	"github.com/ethereum/go-ethereum"
 
 	"github.com/ethereum/go-ethereum/common"
 	eth_crypto "github.com/ethereum/go-ethereum/crypto"

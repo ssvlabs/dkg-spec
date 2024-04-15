@@ -3,11 +3,12 @@ package spec
 import (
 	"bytes"
 	"context"
-	"dkg-spec/eip1271"
 	"fmt"
+	"math/big"
+
+	"github.com/bloxapp/dkg-spec/eip1271"
 	ssz "github.com/ferranbt/fastssz"
 	"github.com/google/uuid"
-	"math/big"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"

@@ -3,10 +3,11 @@ package fixtures
 import (
 	"crypto/rsa"
 	"crypto/x509"
-	spec "dkg-spec"
-	"dkg-spec/crypto"
 	"encoding/hex"
 	"encoding/pem"
+
+	spec "github.com/bloxapp/dkg-spec"
+	"github.com/bloxapp/dkg-spec/crypto"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/herumi/bls-eth-go-binary/bls"

@@ -1,6 +1,6 @@
 package fixtures
 
-import spec "dkg-spec"
+import spec "github.com/bloxapp/dkg-spec"
 
 var (
 	TestReshare4Operators = spec.Reshare{

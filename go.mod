@@ -1,4 +1,4 @@
-module dkg-spec
+module github.com/bloxapp/dkg-spec
 
 go 1.21
 
