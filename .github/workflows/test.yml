@@ -10,8 +10,5 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Get Dependencies
-        run: go get -v -t -d ./...
-
       - name: Test
         run: go test -json ./...
