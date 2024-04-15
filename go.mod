@@ -1,6 +1,6 @@
 module github.com/bloxapp/dkg-spec
 
-go 1.21
+go 1.20
 
 require (
 	github.com/attestantio/go-eth2-client v0.21.1
