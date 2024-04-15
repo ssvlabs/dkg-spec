@@ -1,13 +1,11 @@
 name: Test
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "*" ]
-
+  workflow_run:
+    workflows: [ "SSZ Generate" ]
+    types:
+      - completed
 jobs:
-
   build:
     runs-on: ubuntu-latest
     steps:
