@@ -1,11 +1,13 @@
 package crypto
 
 import (
-	"dkg-spec/eip1271"
-	"dkg-spec/testing/stubs"
+	"testing"
+
+	"github.com/bloxapp/dkg-spec/eip1271"
+	"github.com/bloxapp/dkg-spec/testing/stubs"
+
 	"github.com/ethereum/go-ethereum"
 	ssz "github.com/ferranbt/fastssz"
-	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
 	eth_crypto "github.com/ethereum/go-ethereum/crypto"

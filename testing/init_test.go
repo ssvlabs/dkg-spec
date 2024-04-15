@@ -1,9 +1,10 @@
 package testing
 
 import (
-	spec "dkg-spec"
-	"dkg-spec/testing/fixtures"
 	"testing"
+
+	spec "github.com/bloxapp/dkg-spec"
+	"github.com/bloxapp/dkg-spec/testing/fixtures"
 
 	"github.com/stretchr/testify/require"
 )

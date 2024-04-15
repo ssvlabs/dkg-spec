@@ -1,7 +1,8 @@
 package spec
 
 import (
-	"dkg-spec/eip1271"
+	"github.com/bloxapp/dkg-spec/eip1271"
+
 	"github.com/google/uuid"
 	"golang.org/x/exp/maps"
 )

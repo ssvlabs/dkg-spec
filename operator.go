@@ -2,8 +2,9 @@ package spec
 
 import (
 	"crypto/rsa"
-	"dkg-spec/crypto"
-	"dkg-spec/eip1271"
+
+	"github.com/bloxapp/dkg-spec/crypto"
+	"github.com/bloxapp/dkg-spec/eip1271"
 	"github.com/herumi/bls-eth-go-binary/bls"
 )
 
