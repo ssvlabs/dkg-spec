@@ -1,17 +1,9 @@
 package spec
 
 import (
-	"bytes"
-	"context"
 	"dkg-spec/eip1271"
-	"fmt"
-	ssz "github.com/ferranbt/fastssz"
 	"github.com/google/uuid"
-	"math/big"
-
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
-	eth_crypto "github.com/ethereum/go-ethereum/crypto"
+	"golang.org/x/exp/maps"
 )
 
 // RunDKG is called when an initiator wants to start a new DKG ceremony
@@ -30,6 +22,7 @@ func RunDKG(init *Init) ([]*Result, error) {
 		init.Owner,
 		init.Nonce,
 		id,
+		len(init.Operators),
 		results)
 	return results, err
 }
@@ -42,13 +35,6 @@ func RunReshare(
 	proofs map[*Operator]SignedProof,
 	client eip1271.ETHClient,
 ) ([]*Result, error) {
-	if err := VerifySignedMessageByOwner(
-		client,
-		signedReshare.Reshare.Owner,
-		signedReshare,
-		signedReshare.Signature); err != nil {
-		return nil, err
-	}
 	id := NewID()
 
 	var results []*Result
@@ -63,72 +49,49 @@ func RunReshare(
 		signedReshare.Reshare.Owner,
 		signedReshare.Reshare.Nonce,
 		id,
+		len(signedReshare.Reshare.NewOperators),
 		results)
 	return results, err
 }
 
-// VerifySignedMessageByOwner returns nil if signature over message is valid (signed by owner)
-func VerifySignedMessageByOwner(
+func RunResign(
+	validatorPK []byte,
+	withdrawalCredentials []byte,
+	fork [4]byte,
+	signedResign *SignedResign,
+	proofs map[*Operator]SignedProof,
 	client eip1271.ETHClient,
-	owner [20]byte,
-	msg ssz.HashRoot,
-	signature []byte,
-) error {
-	isEOASignature, err := IsEOAAccount(client, owner)
+) ([]*Result, error) {
+	operators := maps.Keys(proofs)
+
+	t, err := ThresholdForCluster(operators)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	hash, err := msg.HashTreeRoot()
-	if err != nil {
-		return err
+	id := NewID()
+
+	var results []*Result
+	/*
+		DKG ceremony ...
+	*/
+
+	expectedResultsCount := int(t)
+	if len(results) > expectedResultsCount {
+		expectedResultsCount = len(results)
 	}
 
-	if isEOASignature {
-		pk, err := eth_crypto.SigToPub(hash[:], signature)
-		if err != nil {
-			return err
-		}
-
-		address := eth_crypto.PubkeyToAddress(*pk)
-
-		if common.Address(owner).Cmp(address) != 0 {
-			return fmt.Errorf("invalid signed reshare signature")
-		}
-	} else {
-		// EIP 1271 signature
-		// gnosis implementation https://github.com/safe-global/safe-smart-account/blob/2278f7ccd502878feb5cec21dd6255b82df374b5/contracts/Safe.sol#L265
-		// https://github.com/safe-global/safe-smart-account/blob/main/docs/signatures.md
-		// ... verify via contract call
-		signerVerification, err := eip1271.NewEip1271(owner, client)
-		if err != nil {
-			return err
-		}
-		res, err := signerVerification.IsValidSignature(&bind.CallOpts{
-			Context: context.Background(),
-		}, hash[:], signature)
-		if err != nil {
-			return err
-		}
-		if !bytes.Equal(eip1271.MagicValue[:], res[:]) {
-			return fmt.Errorf("signature invalid")
-		}
-	}
-
-	return nil
-}
-
-func IsEOAAccount(client eip1271.ETHClient, address common.Address) (bool, error) {
-	block, err := client.BlockNumber(context.Background())
-	if err != nil {
-		return false, err
-	}
-
-	code, err := client.CodeAt(context.Background(), address, (&big.Int{}).SetUint64(block))
-	if err != nil {
-		return false, err
-	}
-	return len(code) == 0, nil
+	_, _, _, err = ValidateResults(
+		operators,
+		withdrawalCredentials,
+		validatorPK,
+		fork,
+		signedResign.Resign.Owner,
+		signedResign.Resign.Nonce,
+		id,
+		expectedResultsCount, // resign only requires a threshold of signers
+		results)
+	return results, err
 }
 
 // NewID generates a random ID from 2 random concat UUIDs

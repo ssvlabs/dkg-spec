@@ -1,17 +1,34 @@
-package testing
+package crypto
 
 import (
-	spec "dkg-spec"
 	"dkg-spec/eip1271"
-	"dkg-spec/testing/fixtures"
 	"dkg-spec/testing/stubs"
 	"github.com/ethereum/go-ethereum"
+	ssz "github.com/ferranbt/fastssz"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
 	eth_crypto "github.com/ethereum/go-ethereum/crypto"
 	"github.com/stretchr/testify/require"
 )
+
+// SSZBytes --
+type SSZBytes []byte
+
+func (b SSZBytes) HashTreeRoot() ([32]byte, error) {
+	return ssz.HashWithDefaultHasher(b)
+}
+
+func (b SSZBytes) GetTree() (*ssz.Node, error) {
+	return ssz.ProofTree(b)
+}
+
+func (b SSZBytes) HashTreeRootWith(hh ssz.HashWalker) error {
+	indx := hh.Index()
+	hh.PutBytes(b)
+	hh.Merkleize(indx)
+	return nil
+}
 
 func TestVerifySignedReshare(t *testing.T) {
 	t.Run("valid EOA signature", func(t *testing.T) {
@@ -25,23 +42,16 @@ func TestVerifySignedReshare(t *testing.T) {
 		require.NoError(t, err)
 		address := eth_crypto.PubkeyToAddress(sk.PublicKey)
 
-		reshare := spec.Reshare{
-			ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
-			OldOperators:    fixtures.GenerateOperators(4),
-			NewOperators:    fixtures.GenerateOperators(7),
-			OldT:            3,
-			NewT:            5,
-			Owner:           address,
-		}
-		hash, err := reshare.HashTreeRoot()
+		plain := SSZBytes("testing vector")
+		hash, err := plain.HashTreeRoot()
 		require.NoError(t, err)
 
 		sig, err := eth_crypto.Sign(hash[:], sk)
 		require.NoError(t, err)
 
-		require.NoError(t, spec.VerifySignedMessageByOwner(stubClient,
+		require.NoError(t, VerifySignedMessageByOwner(stubClient,
 			address,
-			&reshare,
+			plain,
 			sig,
 		))
 	})
@@ -56,23 +66,16 @@ func TestVerifySignedReshare(t *testing.T) {
 		sk, err := eth_crypto.GenerateKey()
 		require.NoError(t, err)
 
-		reshare := spec.Reshare{
-			ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
-			OldOperators:    fixtures.GenerateOperators(4),
-			NewOperators:    fixtures.GenerateOperators(7),
-			OldT:            3,
-			NewT:            5,
-			Owner:           fixtures.TestOwnerAddress,
-		}
-		hash, err := reshare.HashTreeRoot()
+		plain := SSZBytes("testing vector")
+		hash, err := plain.HashTreeRoot()
 		require.NoError(t, err)
 
 		sig, err := eth_crypto.Sign(hash[:], sk)
 		require.NoError(t, err)
 
-		require.EqualError(t, spec.VerifySignedMessageByOwner(stubClient,
-			fixtures.TestOwnerAddress,
-			&reshare,
+		require.EqualError(t, VerifySignedMessageByOwner(stubClient,
+			[20]byte{},
+			plain,
 			sig), "invalid signed reshare signature")
 	})
 
@@ -93,23 +96,16 @@ func TestVerifySignedReshare(t *testing.T) {
 			},
 		}
 
-		reshare := spec.Reshare{
-			ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
-			OldOperators:    fixtures.GenerateOperators(4),
-			NewOperators:    fixtures.GenerateOperators(7),
-			OldT:            3,
-			NewT:            5,
-			Owner:           address,
-		}
-		hash, err := reshare.HashTreeRoot()
+		plain := SSZBytes("testing vector")
+		hash, err := plain.HashTreeRoot()
 		require.NoError(t, err)
 
 		sig, err := eth_crypto.Sign(hash[:], sk)
 		require.NoError(t, err)
 
-		require.NoError(t, spec.VerifySignedMessageByOwner(stubClient,
+		require.NoError(t, VerifySignedMessageByOwner(stubClient,
 			address,
-			&reshare,
+			plain,
 			sig))
 	})
 
@@ -130,23 +126,16 @@ func TestVerifySignedReshare(t *testing.T) {
 			},
 		}
 
-		reshare := spec.Reshare{
-			ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
-			OldOperators:    fixtures.GenerateOperators(4),
-			NewOperators:    fixtures.GenerateOperators(7),
-			OldT:            3,
-			NewT:            5,
-			Owner:           address,
-		}
-		hash, err := reshare.HashTreeRoot()
+		plain := SSZBytes("testing vector")
+		hash, err := plain.HashTreeRoot()
 		require.NoError(t, err)
 
 		sig, err := eth_crypto.Sign(hash[:], sk)
 		require.NoError(t, err)
 
-		require.EqualError(t, spec.VerifySignedMessageByOwner(stubClient,
+		require.EqualError(t, VerifySignedMessageByOwner(stubClient,
 			address,
-			&reshare,
+			plain,
 			sig), "signature invalid")
 	})
 }

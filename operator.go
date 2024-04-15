@@ -78,7 +78,7 @@ func OperatorReshare(
 	sk *rsa.PrivateKey,
 	client eip1271.ETHClient,
 ) (*Result, error) {
-	if err := VerifySignedMessageByOwner(
+	if err := crypto.VerifySignedMessageByOwner(
 		client,
 		signedReshare.Reshare.Owner,
 		signedReshare,
@@ -120,7 +120,7 @@ func OperatorResign(
 	sk *rsa.PrivateKey,
 	client eip1271.ETHClient,
 ) (*Result, error) {
-	if err := VerifySignedMessageByOwner(
+	if err := crypto.VerifySignedMessageByOwner(
 		client,
 		signedResign.Resign.Owner,
 		signedResign,
@@ -143,59 +143,4 @@ func OperatorResign(
 		signedResign.Resign.Fork,
 		signedResign.Resign.Nonce,
 	)
-}
-
-func BuildResult(
-	operatorID uint64,
-	requestID [24]byte,
-	share *bls.SecretKey,
-	sk *rsa.PrivateKey,
-	validatorPK []byte,
-	owner [20]byte,
-	withdrawalCredentials []byte,
-	fork [4]byte,
-	nonce uint64,
-) (*Result, error) {
-	// sign deposit data
-	depositDataRoot, err := crypto.DepositDataRootForFork(
-		fork,
-		validatorPK,
-		withdrawalCredentials,
-		crypto.MaxEffectiveBalanceInGwei,
-	)
-	if err != nil {
-		return nil, err
-	}
-	depositDataSig := share.SignByte(depositDataRoot[:])
-
-	// sign proof
-	encryptedShare, err := crypto.Encrypt(&sk.PublicKey, share.Serialize())
-	if err != nil {
-		return nil, err
-	}
-	newProof := &Proof{
-		ValidatorPubKey: validatorPK,
-		EncryptedShare:  encryptedShare,
-		SharePubKey:     share.GetPublicKey().Serialize(),
-		Owner:           owner,
-	}
-	byts, err := newProof.MarshalSSZ()
-	if err != nil {
-		return nil, err
-	}
-	proofSig, err := crypto.SignRSA(sk, byts)
-	if err != nil {
-		return nil, err
-	}
-
-	return &Result{
-		OperatorID:                 operatorID,
-		RequestID:                  requestID,
-		DepositPartialSignature:    depositDataSig.Serialize(),
-		OwnerNoncePartialSignature: share.SignByte(PartialNonceRoot(owner, nonce)).Serialize(),
-		SignedProof: SignedProof{
-			Proof:     newProof,
-			Signature: proofSig,
-		},
-	}, nil
 }

@@ -2,6 +2,7 @@ package spec
 
 import (
 	"bytes"
+	"crypto/rsa"
 	"dkg-spec/crypto"
 	"fmt"
 
@@ -10,6 +11,61 @@ import (
 	eth_crypto "github.com/ethereum/go-ethereum/crypto"
 	"github.com/herumi/bls-eth-go-binary/bls"
 )
+
+func BuildResult(
+	operatorID uint64,
+	requestID [24]byte,
+	share *bls.SecretKey,
+	sk *rsa.PrivateKey,
+	validatorPK []byte,
+	owner [20]byte,
+	withdrawalCredentials []byte,
+	fork [4]byte,
+	nonce uint64,
+) (*Result, error) {
+	// sign deposit data
+	depositDataRoot, err := crypto.DepositDataRootForFork(
+		fork,
+		validatorPK,
+		withdrawalCredentials,
+		crypto.MaxEffectiveBalanceInGwei,
+	)
+	if err != nil {
+		return nil, err
+	}
+	depositDataSig := share.SignByte(depositDataRoot[:])
+
+	// sign proof
+	encryptedShare, err := crypto.Encrypt(&sk.PublicKey, share.Serialize())
+	if err != nil {
+		return nil, err
+	}
+	newProof := &Proof{
+		ValidatorPubKey: validatorPK,
+		EncryptedShare:  encryptedShare,
+		SharePubKey:     share.GetPublicKey().Serialize(),
+		Owner:           owner,
+	}
+	hash, err := newProof.HashTreeRoot()
+	if err != nil {
+		return nil, err
+	}
+	proofSig, err := crypto.SignRSA(sk, hash[:])
+	if err != nil {
+		return nil, err
+	}
+
+	return &Result{
+		OperatorID:                 operatorID,
+		RequestID:                  requestID,
+		DepositPartialSignature:    depositDataSig.Serialize(),
+		OwnerNoncePartialSignature: share.SignByte(PartialNonceRoot(owner, nonce)).Serialize(),
+		SignedProof: SignedProof{
+			Proof:     newProof,
+			Signature: proofSig,
+		},
+	}, nil
+}
 
 // ValidateResults returns nil if results array is valid
 func ValidateResults(
@@ -20,11 +76,13 @@ func ValidateResults(
 	ownerAddress [20]byte,
 	nonce uint64,
 	requestID [24]byte,
+	t int, // threshold for minimum results needed
 	results []*Result,
 ) (*bls.PublicKey, *phase0.DepositData, *bls.Sign, error) {
 	if len(results) != len(operators) {
 		return nil, nil, nil, fmt.Errorf("mistmatch results count")
 	}
+
 	// recover and validate validator pk
 	pk, err := RecoverValidatorPKFromResults(results)
 	if err != nil {
@@ -38,6 +96,8 @@ func ValidateResults(
 	sharePubKeys := make([]*bls.PublicKey, 0, len(results))
 	sigsPartialDeposit := make([]*bls.Sign, 0, len(results))
 	sigsPartialOwnerNonce := make([]*bls.Sign, 0, len(results))
+
+	// validate individual result
 	for _, result := range results {
 		if err := ValidateResult(operators, ownerAddress, requestID, withdrawalCredentials, validatorPK, fork, nonce, result); err != nil {
 			return nil, nil, nil, err
@@ -51,6 +111,8 @@ func ValidateResults(
 		sigsPartialDeposit = append(sigsPartialDeposit, deposit)
 		sigsPartialOwnerNonce = append(sigsPartialOwnerNonce, ownerNonce)
 	}
+
+	// validate deposit data signature
 	validatorRecoveredPK, err := crypto.RecoverValidatorPublicKey(ids, sharePubKeys)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("failed to recover validator public key from results")

@@ -9,6 +9,34 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestBuildResult(t *testing.T) {
+	t.Run("valid result", func(t *testing.T) {
+		result, err := spec.BuildResult(
+			1,
+			fixtures.TestRequestID,
+			fixtures.ShareSK(fixtures.TestValidator4OperatorsShare1),
+			fixtures.OperatorSK(fixtures.TestOperator1SK),
+			fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+			fixtures.TestOwnerAddress,
+			fixtures.TestWithdrawalCred,
+			fixtures.TestFork,
+			fixtures.TestNonce,
+		)
+		require.NoError(t, err)
+		require.NoError(t, spec.ValidateResult(
+			fixtures.GenerateOperators(4),
+			fixtures.TestOwnerAddress,
+			fixtures.TestRequestID,
+			fixtures.TestWithdrawalCred,
+			fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+			fixtures.TestFork,
+			fixtures.TestNonce,
+			result,
+		))
+	})
+
+}
+
 func TestValidateResults(t *testing.T) {
 	t.Run("valid 4 operators", func(t *testing.T) {
 		_, _, _, err := spec.ValidateResults(
@@ -19,6 +47,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
 			fixtures.TestRequestID,
+			3,
 			fixtures.Results4Operators(),
 		)
 		require.NoError(t, err)
@@ -33,6 +62,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
 			fixtures.TestRequestID,
+			5,
 			fixtures.Results7Operators(),
 		)
 		require.NoError(t, err)
@@ -47,6 +77,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
 			fixtures.TestRequestID,
+			7,
 			fixtures.Results10Operators(),
 		)
 		require.NoError(t, err)
@@ -61,6 +92,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
 			fixtures.TestRequestID,
+			9,
 			fixtures.Results13Operators(),
 		)
 		require.NoError(t, err)
@@ -88,6 +120,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
 			fixtures.TestRequestID,
+			3,
 			res,
 		)
 		require.EqualError(t, err, "invalid recovered validator pubkey")
@@ -103,6 +136,23 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
 			fixtures.TestRequestID,
+			3,
+			res,
+		)
+		require.EqualError(t, err, "mistmatch results count")
+	})
+
+	t.Run("too few results", func(t *testing.T) {
+		res := fixtures.Results4Operators()
+		_, _, _, err := spec.ValidateResults(
+			fixtures.GenerateOperators(7),
+			fixtures.TestWithdrawalCred,
+			fixtures.ShareSK(fixtures.TestValidator7Operators).GetPublicKey().Serialize(),
+			fixtures.TestFork,
+			fixtures.TestOwnerAddress,
+			fixtures.TestNonce,
+			fixtures.TestRequestID,
+			3,
 			res,
 		)
 		require.EqualError(t, err, "mistmatch results count")
@@ -125,6 +175,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
 			fixtures.TestRequestID,
+			3,
 			res,
 		)
 		require.EqualError(t, err, "failed to recover validator public key from results")

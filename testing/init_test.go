@@ -8,6 +8,29 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestThresholdForCluster(t *testing.T) {
+	t.Run("cluster size 4", func(t *testing.T) {
+		threshold, err := spec.ThresholdForCluster(fixtures.GenerateOperators(4))
+		require.NoError(t, err)
+		require.EqualValues(t, 3, threshold)
+	})
+	t.Run("cluster size 7", func(t *testing.T) {
+		threshold, err := spec.ThresholdForCluster(fixtures.GenerateOperators(7))
+		require.NoError(t, err)
+		require.EqualValues(t, 5, threshold)
+	})
+	t.Run("cluster size 10", func(t *testing.T) {
+		threshold, err := spec.ThresholdForCluster(fixtures.GenerateOperators(10))
+		require.NoError(t, err)
+		require.EqualValues(t, 7, threshold)
+	})
+	t.Run("cluster size 13", func(t *testing.T) {
+		threshold, err := spec.ThresholdForCluster(fixtures.GenerateOperators(13))
+		require.NoError(t, err)
+		require.EqualValues(t, 9, threshold)
+	})
+}
+
 func TestValidateInitMessage(t *testing.T) {
 	t.Run("valid", func(t *testing.T) {
 		require.NoError(t, spec.ValidateInitMessage(&spec.Init{

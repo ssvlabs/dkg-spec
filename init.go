@@ -34,6 +34,23 @@ func ValidThresholdSet(t uint64, operators []*Operator) bool {
 	return false
 }
 
+// ThresholdForCluster returns the threshold for provided group, or error
+func ThresholdForCluster(operators []*Operator) (uint64, error) {
+	if len(operators) == 4 { // 2f+1 = 3
+		return 3, nil
+	}
+	if len(operators) == 7 { // 2f+1 = 5
+		return 5, nil
+	}
+	if len(operators) == 10 { // 2f+1 = 7
+		return 7, nil
+	}
+	if len(operators) == 13 { // 2f+1 = 9
+		return 9, nil
+	}
+	return 0, fmt.Errorf("invalid cluster size")
+}
+
 // UniqueAndOrderedOperators returns true if array of operators are unique and ordered (no duplicate IDs)
 func UniqueAndOrderedOperators(operators []*Operator) bool {
 	highestID := uint64(0)
