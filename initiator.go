@@ -22,7 +22,6 @@ func RunDKG(init *Init) ([]*Result, error) {
 		init.Owner,
 		init.Nonce,
 		id,
-		len(init.Operators),
 		results)
 	return results, err
 }
@@ -49,7 +48,6 @@ func RunReshare(
 		signedReshare.Reshare.Owner,
 		signedReshare.Reshare.Nonce,
 		id,
-		len(signedReshare.Reshare.NewOperators),
 		results)
 	return results, err
 }
@@ -64,11 +62,6 @@ func RunResign(
 ) ([]*Result, error) {
 	operators := maps.Keys(proofs)
 
-	t, err := ThresholdForCluster(operators)
-	if err != nil {
-		return nil, err
-	}
-
 	id := NewID()
 
 	var results []*Result
@@ -76,12 +69,7 @@ func RunResign(
 		DKG ceremony ...
 	*/
 
-	expectedResultsCount := int(t)
-	if len(results) > expectedResultsCount {
-		expectedResultsCount = len(results)
-	}
-
-	_, _, _, err = ValidateResults(
+	_, _, _, err := ValidateResults(
 		operators,
 		withdrawalCredentials,
 		validatorPK,
@@ -89,7 +77,6 @@ func RunResign(
 		signedResign.Resign.Owner,
 		signedResign.Resign.Nonce,
 		id,
-		expectedResultsCount, // resign only requires a threshold of signers
 		results)
 	return results, err
 }

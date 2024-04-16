@@ -76,10 +76,13 @@ func ValidateResults(
 	ownerAddress [20]byte,
 	nonce uint64,
 	requestID [24]byte,
-	t int, // threshold for minimum results needed
 	results []*Result,
 ) (*bls.PublicKey, *phase0.DepositData, *bls.Sign, error) {
-	if len(results) != len(operators) {
+	t, err := ThresholdForCluster(operators)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	if len(results) < int(t) || len(results) > len(operators) {
 		return nil, nil, nil, fmt.Errorf("mistmatch results count")
 	}
 

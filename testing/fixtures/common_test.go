@@ -16,28 +16,34 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestSSS(t *testing.T) {
+func TestSSS(tt *testing.T) {
+	t := 9
+	n := 13
+
 	// master key Polynomial
-	msk := make([]bls.SecretKey, 10)
+	msk := make([]bls.SecretKey, t)
 
 	sk := &bls.SecretKey{}
 	err := sk.SetHexString(TestValidator10Operators)
-	require.NoError(t, err)
+	require.NoError(tt, err)
 
 	msk[0] = *sk
 
 	// construct poly
-	for i := uint64(1); i < 7; i++ {
+	for i := uint64(1); i < uint64(t); i++ {
 		sk := bls.SecretKey{}
 		sk.SetByCSPRNG()
 		msk[i] = sk
 	}
 
-	ids := []uint64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	ids := []uint64{}
+	for i := 1; i <= n; i++ {
+		ids = append(ids, uint64(i))
+	}
 
 	// evaluate shares - starting from 1 because 0 is master key
 	shares := make(map[uint64]*bls.SecretKey)
-	for i := uint64(0); i < 10; i++ {
+	for i := uint64(0); i < uint64(n); i++ {
 		id := ids[i]
 		blsID := bls.ID{}
 		err := blsID.SetDecString(fmt.Sprintf("%d", id))
@@ -59,6 +65,21 @@ func TestSSS(t *testing.T) {
 
 	fmt.Printf("validator sk: %s\n", sk.GetHexString())
 
+	////////
+
+	ids = make([]uint64, t)
+	pks := make([]*bls.PublicKey, t)
+
+	for i := uint64(1); i <= uint64(t); i++ {
+		pk := shares[i].GetPublicKey()
+		pks[i-1] = pk
+		ids[i-1] = i
+	}
+
+	reconstructed, err := crypto.RecoverValidatorPublicKey(ids, pks)
+	require.NoError(tt, err)
+
+	require.EqualValues(tt, sk.GetPublicKey().Serialize(), reconstructed.Serialize())
 }
 
 func TestSignNonce(t *testing.T) {

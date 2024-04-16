@@ -38,7 +38,7 @@ func TestBuildResult(t *testing.T) {
 }
 
 func TestValidateResults(t *testing.T) {
-	t.Run("valid 4 operators", func(t *testing.T) {
+	t.Run("valid 3 out of 4 operators", func(t *testing.T) {
 		_, _, _, err := spec.ValidateResults(
 			fixtures.GenerateOperators(4),
 			fixtures.TestWithdrawalCred,
@@ -47,13 +47,26 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
 			fixtures.TestRequestID,
-			3,
+			fixtures.Results4Operators()[:3],
+		)
+		require.NoError(t, err)
+	})
+
+	t.Run("valid 4 out of 4 operators", func(t *testing.T) {
+		_, _, _, err := spec.ValidateResults(
+			fixtures.GenerateOperators(4),
+			fixtures.TestWithdrawalCred,
+			fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+			fixtures.TestFork,
+			fixtures.TestOwnerAddress,
+			fixtures.TestNonce,
+			fixtures.TestRequestID,
 			fixtures.Results4Operators(),
 		)
 		require.NoError(t, err)
 	})
 
-	t.Run("valid 7 operators", func(t *testing.T) {
+	t.Run("valid 5 out of 7 operators", func(t *testing.T) {
 		_, _, _, err := spec.ValidateResults(
 			fixtures.GenerateOperators(7),
 			fixtures.TestWithdrawalCred,
@@ -62,13 +75,38 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
 			fixtures.TestRequestID,
-			5,
+			fixtures.Results7Operators()[:5],
+		)
+		require.NoError(t, err)
+	})
+	t.Run("valid 6 out of 7 operators", func(t *testing.T) {
+		_, _, _, err := spec.ValidateResults(
+			fixtures.GenerateOperators(7),
+			fixtures.TestWithdrawalCred,
+			fixtures.ShareSK(fixtures.TestValidator7Operators).GetPublicKey().Serialize(),
+			fixtures.TestFork,
+			fixtures.TestOwnerAddress,
+			fixtures.TestNonce,
+			fixtures.TestRequestID,
+			fixtures.Results7Operators()[:6],
+		)
+		require.NoError(t, err)
+	})
+	t.Run("valid 7 out of 7 operators", func(t *testing.T) {
+		_, _, _, err := spec.ValidateResults(
+			fixtures.GenerateOperators(7),
+			fixtures.TestWithdrawalCred,
+			fixtures.ShareSK(fixtures.TestValidator7Operators).GetPublicKey().Serialize(),
+			fixtures.TestFork,
+			fixtures.TestOwnerAddress,
+			fixtures.TestNonce,
+			fixtures.TestRequestID,
 			fixtures.Results7Operators(),
 		)
 		require.NoError(t, err)
 	})
 
-	t.Run("valid 10 operators", func(t *testing.T) {
+	t.Run("valid 7 out of 10 operators", func(t *testing.T) {
 		_, _, _, err := spec.ValidateResults(
 			fixtures.GenerateOperators(10),
 			fixtures.TestWithdrawalCred,
@@ -77,13 +115,51 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
 			fixtures.TestRequestID,
-			7,
+			fixtures.Results10Operators()[:7],
+		)
+		require.NoError(t, err)
+	})
+	t.Run("valid 8 out of 10 operators", func(t *testing.T) {
+		_, _, _, err := spec.ValidateResults(
+			fixtures.GenerateOperators(10),
+			fixtures.TestWithdrawalCred,
+			fixtures.ShareSK(fixtures.TestValidator10Operators).GetPublicKey().Serialize(),
+			fixtures.TestFork,
+			fixtures.TestOwnerAddress,
+			fixtures.TestNonce,
+			fixtures.TestRequestID,
+			fixtures.Results10Operators()[:8],
+		)
+		require.NoError(t, err)
+	})
+	t.Run("valid 9 out of 10 operators", func(t *testing.T) {
+		_, _, _, err := spec.ValidateResults(
+			fixtures.GenerateOperators(10),
+			fixtures.TestWithdrawalCred,
+			fixtures.ShareSK(fixtures.TestValidator10Operators).GetPublicKey().Serialize(),
+			fixtures.TestFork,
+			fixtures.TestOwnerAddress,
+			fixtures.TestNonce,
+			fixtures.TestRequestID,
+			fixtures.Results10Operators()[:9],
+		)
+		require.NoError(t, err)
+	})
+	t.Run("valid 10 out of 10 operators", func(t *testing.T) {
+		_, _, _, err := spec.ValidateResults(
+			fixtures.GenerateOperators(10),
+			fixtures.TestWithdrawalCred,
+			fixtures.ShareSK(fixtures.TestValidator10Operators).GetPublicKey().Serialize(),
+			fixtures.TestFork,
+			fixtures.TestOwnerAddress,
+			fixtures.TestNonce,
+			fixtures.TestRequestID,
 			fixtures.Results10Operators(),
 		)
 		require.NoError(t, err)
 	})
 
-	t.Run("valid 13 operators", func(t *testing.T) {
+	t.Run("valid 9 out of 13 operators", func(t *testing.T) {
 		_, _, _, err := spec.ValidateResults(
 			fixtures.GenerateOperators(13),
 			fixtures.TestWithdrawalCred,
@@ -92,7 +168,58 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
 			fixtures.TestRequestID,
-			9,
+			fixtures.Results13Operators()[:9],
+		)
+		require.NoError(t, err)
+	})
+	t.Run("valid 10 out of 13 operators", func(t *testing.T) {
+		_, _, _, err := spec.ValidateResults(
+			fixtures.GenerateOperators(13),
+			fixtures.TestWithdrawalCred,
+			fixtures.ShareSK(fixtures.TestValidator13Operators).GetPublicKey().Serialize(),
+			fixtures.TestFork,
+			fixtures.TestOwnerAddress,
+			fixtures.TestNonce,
+			fixtures.TestRequestID,
+			fixtures.Results13Operators()[:10],
+		)
+		require.NoError(t, err)
+	})
+	t.Run("valid 11 out of 13 operators", func(t *testing.T) {
+		_, _, _, err := spec.ValidateResults(
+			fixtures.GenerateOperators(13),
+			fixtures.TestWithdrawalCred,
+			fixtures.ShareSK(fixtures.TestValidator13Operators).GetPublicKey().Serialize(),
+			fixtures.TestFork,
+			fixtures.TestOwnerAddress,
+			fixtures.TestNonce,
+			fixtures.TestRequestID,
+			fixtures.Results13Operators()[:11],
+		)
+		require.NoError(t, err)
+	})
+	t.Run("valid 12 out of 13 operators", func(t *testing.T) {
+		_, _, _, err := spec.ValidateResults(
+			fixtures.GenerateOperators(13),
+			fixtures.TestWithdrawalCred,
+			fixtures.ShareSK(fixtures.TestValidator13Operators).GetPublicKey().Serialize(),
+			fixtures.TestFork,
+			fixtures.TestOwnerAddress,
+			fixtures.TestNonce,
+			fixtures.TestRequestID,
+			fixtures.Results13Operators()[:12],
+		)
+		require.NoError(t, err)
+	})
+	t.Run("valid 13 out of 13 operators", func(t *testing.T) {
+		_, _, _, err := spec.ValidateResults(
+			fixtures.GenerateOperators(13),
+			fixtures.TestWithdrawalCred,
+			fixtures.ShareSK(fixtures.TestValidator13Operators).GetPublicKey().Serialize(),
+			fixtures.TestFork,
+			fixtures.TestOwnerAddress,
+			fixtures.TestNonce,
+			fixtures.TestRequestID,
 			fixtures.Results13Operators(),
 		)
 		require.NoError(t, err)
@@ -120,7 +247,6 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
 			fixtures.TestRequestID,
-			3,
 			res,
 		)
 		require.EqualError(t, err, "invalid recovered validator pubkey")
@@ -136,7 +262,6 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
 			fixtures.TestRequestID,
-			3,
 			res,
 		)
 		require.EqualError(t, err, "mistmatch results count")
@@ -152,7 +277,6 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
 			fixtures.TestRequestID,
-			3,
 			res,
 		)
 		require.EqualError(t, err, "mistmatch results count")
@@ -175,7 +299,6 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
 			fixtures.TestRequestID,
-			3,
 			res,
 		)
 		require.EqualError(t, err, "failed to recover validator public key from results")
