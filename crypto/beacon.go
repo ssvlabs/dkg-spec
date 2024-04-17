@@ -2,6 +2,7 @@ package crypto
 
 import (
 	"fmt"
+
 	"github.com/attestantio/go-eth2-client/spec/phase0"
 	"github.com/bloxapp/eth2-key-manager/core"
 	eth1deposit "github.com/bloxapp/eth2-key-manager/eth1_deposit"

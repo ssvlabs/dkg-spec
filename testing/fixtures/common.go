@@ -6,8 +6,8 @@ import (
 	"encoding/hex"
 	"encoding/pem"
 
-	spec "github.com/bloxapp/dkg-spec"
-	"github.com/bloxapp/dkg-spec/crypto"
+	spec "github.com/ssvlabs/dkg-spec"
+	"github.com/ssvlabs/dkg-spec/crypto"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/herumi/bls-eth-go-binary/bls"

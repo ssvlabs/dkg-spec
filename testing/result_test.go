@@ -3,9 +3,9 @@ package testing
 import (
 	"testing"
 
-	spec "github.com/bloxapp/dkg-spec"
-	"github.com/bloxapp/dkg-spec/testing/fixtures"
 	"github.com/ethereum/go-ethereum/common"
+	spec "github.com/ssvlabs/dkg-spec"
+	"github.com/ssvlabs/dkg-spec/testing/fixtures"
 
 	"github.com/stretchr/testify/require"
 )

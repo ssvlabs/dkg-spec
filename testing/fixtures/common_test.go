@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"testing"
 
-	spec "github.com/bloxapp/dkg-spec"
-	"github.com/bloxapp/dkg-spec/crypto"
+	spec "github.com/ssvlabs/dkg-spec"
+	"github.com/ssvlabs/dkg-spec/crypto"
 
 	"github.com/attestantio/go-eth2-client/spec/phase0"
 	"github.com/ethereum/go-ethereum/common"

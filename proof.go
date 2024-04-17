@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/bloxapp/dkg-spec/crypto"
+	"github.com/ssvlabs/dkg-spec/crypto"
 )
 
 func ValidateCeremonyProof(

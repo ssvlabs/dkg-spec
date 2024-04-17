@@ -3,9 +3,9 @@ package spec
 import (
 	"crypto/rsa"
 
-	"github.com/bloxapp/dkg-spec/crypto"
-	"github.com/bloxapp/dkg-spec/eip1271"
 	"github.com/herumi/bls-eth-go-binary/bls"
+	"github.com/ssvlabs/dkg-spec/crypto"
+	"github.com/ssvlabs/dkg-spec/eip1271"
 )
 
 // OperatorInit is called on operator side when a new init message is received from initiator

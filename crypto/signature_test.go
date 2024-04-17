@@ -3,8 +3,8 @@ package crypto
 import (
 	"testing"
 
-	"github.com/bloxapp/dkg-spec/eip1271"
-	"github.com/bloxapp/dkg-spec/testing/stubs"
+	"github.com/ssvlabs/dkg-spec/eip1271"
+	"github.com/ssvlabs/dkg-spec/testing/stubs"
 
 	"github.com/ethereum/go-ethereum"
 	ssz "github.com/ferranbt/fastssz"
