@@ -3,13 +3,14 @@ package crypto
 import (
 	"bytes"
 	"context"
-	"dkg-spec/eip1271"
 	"fmt"
+	"math/big"
+
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	eth_crypto "github.com/ethereum/go-ethereum/crypto"
 	ssz "github.com/ferranbt/fastssz"
-	"math/big"
+	"github.com/ssvlabs/dkg-spec/eip1271"
 )
 
 // VerifySignedMessageByOwner returns nil if signature over message is valid (signed by owner)

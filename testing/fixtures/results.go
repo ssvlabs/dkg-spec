@@ -1,6 +1,6 @@
 package fixtures
 
-import spec "dkg-spec"
+import spec "github.com/ssvlabs/dkg-spec"
 
 func Results4Operators() []*spec.Result {
 	return []*spec.Result{

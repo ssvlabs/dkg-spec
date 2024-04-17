@@ -1,10 +1,11 @@
 package testing
 
 import (
-	spec "dkg-spec"
-	"dkg-spec/testing/fixtures"
-	"github.com/ethereum/go-ethereum/common"
 	"testing"
+
+	"github.com/ethereum/go-ethereum/common"
+	spec "github.com/ssvlabs/dkg-spec"
+	"github.com/ssvlabs/dkg-spec/testing/fixtures"
 
 	"github.com/stretchr/testify/require"
 )

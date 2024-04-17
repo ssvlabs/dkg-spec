@@ -1,9 +1,10 @@
 package testing
 
 import (
-	spec "dkg-spec"
-	"dkg-spec/testing/fixtures"
 	"testing"
+
+	spec "github.com/ssvlabs/dkg-spec"
+	"github.com/ssvlabs/dkg-spec/testing/fixtures"
 
 	"github.com/stretchr/testify/require"
 )

@@ -2,8 +2,9 @@ package spec
 
 import (
 	"bytes"
-	"dkg-spec/crypto"
 	"fmt"
+
+	"github.com/ssvlabs/dkg-spec/crypto"
 )
 
 func ValidateCeremonyProof(
