@@ -7,11 +7,10 @@ import (
 	"github.com/herumi/bls-eth-go-binary/bls"
 )
 
-// OperatorInit is called on operator side when a new init message is received from initiator
-func OperatorInit(
+// Init is called on operator side when a new init message is received from initiator
+func (op *Operator) Init(
 	init *Init,
 	requestID [24]byte,
-	operatorID uint64,
 	sk *rsa.PrivateKey,
 ) (*Result, error) {
 	if err := ValidateInitMessage(init); err != nil {
@@ -58,7 +57,7 @@ func OperatorInit(
 	}
 
 	return &Result{
-		OperatorID:                 operatorID,
+		OperatorID:                 op.ID,
 		RequestID:                  requestID,
 		DepositPartialSignature:    depositDataSig.Serialize(),
 		OwnerNoncePartialSignature: share.SignByte(PartialNonceRoot(init.Owner, init.Nonce)).Serialize(),
@@ -69,10 +68,9 @@ func OperatorInit(
 	}, nil
 }
 
-// OperatorReshare is called when an operator receives a reshare message
-func OperatorReshare(
+// Reshare is called when an operator receives a reshare message
+func (op *Operator) Reshare(
 	signedReshare *SignedReshare,
-	operator *Operator,
 	proof *SignedProof,
 	requestID [24]byte,
 	sk *rsa.PrivateKey,
@@ -86,7 +84,7 @@ func OperatorReshare(
 	); err != nil {
 		return nil, err
 	}
-	if err := ValidateReshareMessage(&signedReshare.Reshare, operator, proof); err != nil {
+	if err := ValidateReshareMessage(&signedReshare.Reshare, op, proof); err != nil {
 		return nil, err
 	}
 
@@ -98,7 +96,7 @@ func OperatorReshare(
 	*/
 
 	return BuildResult(
-		operator.ID,
+		op.ID,
 		requestID,
 		share,
 		sk,
@@ -110,14 +108,13 @@ func OperatorReshare(
 	)
 }
 
-// OperatorResign is called when an operator receives a re-sign message
-func OperatorResign(
+// Resign is called when an operator receives a re-sign message
+func (op *Operator) Resign(
 	signedResign *SignedResign,
-	operator *Operator,
 	proof *SignedProof,
 	requestID [24]byte,
 	share *bls.SecretKey,
-	sk *rsa.PrivateKey,
+	sk *rsa.PrivateKey, // operator's encryption private key
 	client eip1271.ETHClient,
 ) (*Result, error) {
 	if err := crypto.VerifySignedMessageByOwner(
@@ -128,12 +125,12 @@ func OperatorResign(
 	); err != nil {
 		return nil, err
 	}
-	if err := ValidateResignMessage(&signedResign.Resign, operator, proof); err != nil {
+	if err := ValidateResignMessage(&signedResign.Resign, op, proof); err != nil {
 		return nil, err
 	}
 
 	return BuildResult(
-		operator.ID,
+		op.ID,
 		requestID,
 		share,
 		sk,
