@@ -19,16 +19,16 @@ When the set of operators changed (including change of size and change of operat
 
 ---
 
-## Validation in Ceremony
+## Validations
 In a DKG ceremony, each message sent between the initiator and the operators are validated by the operators such that:
 - The message is signed by the sender, preventing spoofing attacks.
 - Where replay attacks are possible, a valid nonce is included to ensure the message is fresh (otherwise **Re-sign**).
--
+- The message is in the same scope, i.e., the message is regarding the same ceremony, the same set of operators and it is in the correct stage as the receiver expects.
 
 ---
 
-## Post-Ceremony Validation: Result and Proof struct
-After execution of init, re-sign and reshare, a **result** is returned by the operators for validation and verification.
+## Result and Proof struct
+After execution of init, re-sign and reshare, a **result** is returned by the operators as an important validation for the completion of the ceremony.
 ```go
 type Result struct {
 	// Operator ID
@@ -59,8 +59,8 @@ type Proof struct {
 ```
 *ValidatorPubKey*, *EncryptedShare*, and *Owner* are to identify information of the validator and the operator in SSV network, the *SharePubKey* is computed by the operator after the DKG ceremony using the obtained secret share as the private key.
 
-**Proof**s are published by the initiator after the DKG ceremony. All **Proof** from a ceremony together validates the completion of this ceremony. It makes sure:
-- Partial signatures of operators are publically verifiable using the *SharePubKey* in the proof. If an operator created invalid partial signatures, the network is able to identify and potentially take further action.
+**Proof**s are published by the initiator after the DKG ceremony. All **Proof** from a ceremony together validates the completion of this ceremony. they can make sure:
+- Partial signatures of operators are publically verifiable using the *SharePubKey* in the **proof**. If an operator created invalid partial signatures, the network is able to identify and potentially take further action.
 - An operator knows its peers have completed the protocol locally and has a secret share ready to use. It prevents the case where some operators failed to derive their secret shares while others are unaware.
 - The initiator refers to a completed valid DKG ceremony when initiating **Re-sign** and **Reshare**. Operators are able to identify and verify the corresponding ceremony when receiving requests from the initiator.
 
