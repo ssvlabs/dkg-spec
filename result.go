@@ -5,12 +5,11 @@ import (
 	"crypto/rsa"
 	"fmt"
 
-	"github.com/ssvlabs/dkg-spec/crypto"
-
 	"github.com/attestantio/go-eth2-client/spec/phase0"
 	"github.com/ethereum/go-ethereum/common"
 	eth_crypto "github.com/ethereum/go-ethereum/crypto"
 	"github.com/herumi/bls-eth-go-binary/bls"
+	"github.com/ssvlabs/dkg-spec/crypto"
 )
 
 func BuildResult(
@@ -37,7 +36,7 @@ func BuildResult(
 	depositDataSig := share.SignByte(depositDataRoot[:])
 
 	// sign proof
-	encryptedShare, err := crypto.Encrypt(&sk.PublicKey, share.Serialize())
+	encryptedShare, err := crypto.Encrypt(&sk.PublicKey, []byte(share.SerializeToHexStr()))
 	if err != nil {
 		return nil, err
 	}

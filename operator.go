@@ -39,7 +39,7 @@ func OperatorInit(
 	depositDataSig := share.SignByte(depositDataRoot[:])
 
 	// sign proof
-	encryptedShare, err := crypto.Encrypt(&sk.PublicKey, share.Serialize())
+	encryptedShare, err := crypto.Encrypt(&sk.PublicKey, []byte(share.SerializeToHexStr()))
 	if err != nil {
 		return nil, err
 	}
