@@ -78,7 +78,7 @@ func TestVerifySignedReshare(t *testing.T) {
 		require.EqualError(t, VerifySignedMessageByOwner(stubClient,
 			[20]byte{},
 			plain,
-			sig), "invalid signed reshare signature")
+			sig), "signature invalid")
 	})
 
 	t.Run("valid contract signature", func(t *testing.T) {

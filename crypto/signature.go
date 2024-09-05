@@ -39,7 +39,7 @@ func VerifySignedMessageByOwner(
 		address := eth_crypto.PubkeyToAddress(*pk)
 
 		if common.Address(owner).Cmp(address) != 0 {
-			return fmt.Errorf("invalid signed reshare signature")
+			return fmt.Errorf("signature invalid")
 		}
 	} else {
 		// EIP 1271 signature
