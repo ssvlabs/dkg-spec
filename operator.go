@@ -77,10 +77,14 @@ func (op *Operator) Reshare(
 	sk *rsa.PrivateKey,
 	client eip1271.ETHClient,
 ) (*Result, error) {
+	hash, err := signedReshare.HashTreeRoot()
+	if err != nil {
+		return nil, err
+	}
 	if err := crypto.VerifySignedMessageByOwner(
 		client,
 		signedReshare.Reshare.Owner,
-		signedReshare,
+		hash,
 		signedReshare.Signature,
 	); err != nil {
 		return nil, err
@@ -118,10 +122,14 @@ func (op *Operator) Resign(
 	sk *rsa.PrivateKey, // operator's encryption private key
 	client eip1271.ETHClient,
 ) (*Result, error) {
+	hash, err := signedResign.HashTreeRoot()
+	if err != nil {
+		return nil, err
+	}
 	if err := crypto.VerifySignedMessageByOwner(
 		client,
 		signedResign.Resign.Owner,
-		signedResign,
+		hash,
 		signedResign.Signature,
 	); err != nil {
 		return nil, err
