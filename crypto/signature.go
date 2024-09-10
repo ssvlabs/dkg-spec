@@ -9,7 +9,6 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	eth_crypto "github.com/ethereum/go-ethereum/crypto"
-	ssz "github.com/ferranbt/fastssz"
 	"github.com/ssvlabs/dkg-spec/eip1271"
 )
 
@@ -17,15 +16,10 @@ import (
 func VerifySignedMessageByOwner(
 	client eip1271.ETHClient,
 	owner [20]byte,
-	msg ssz.HashRoot,
+	hash [32]byte,
 	signature []byte,
 ) error {
 	isEOASignature, err := IsEOAAccount(client, owner)
-	if err != nil {
-		return err
-	}
-
-	hash, err := msg.HashTreeRoot()
 	if err != nil {
 		return err
 	}
@@ -38,9 +32,10 @@ func VerifySignedMessageByOwner(
 
 		address := eth_crypto.PubkeyToAddress(*pk)
 
-		if common.Address(owner).Cmp(address) != 0 {
-			return fmt.Errorf("signature invalid")
+		if common.Address(owner).Cmp(address) == 0 {
+			return nil
 		}
+		return fmt.Errorf("invalid EOA signature")
 	} else {
 		// EIP 1271 signature
 		// gnosis implementation https://github.com/safe-global/safe-smart-account/blob/2278f7ccd502878feb5cec21dd6255b82df374b5/contracts/Safe.sol#L265
@@ -56,12 +51,11 @@ func VerifySignedMessageByOwner(
 		if err != nil {
 			return err
 		}
-		if !bytes.Equal(eip1271.MagicValue[:], res[:]) {
-			return fmt.Errorf("signature invalid")
+		if bytes.Equal(eip1271.MAGIC_VALUE_BYTES[:], res[:]) || bytes.Equal(eip1271.MAGIC_VALUE[:], res[:]) {
+			return nil
 		}
+		return fmt.Errorf("invalid eip1271 signature")
 	}
-
-	return nil
 }
 
 func IsEOAAccount(client eip1271.ETHClient, address common.Address) (bool, error) {
