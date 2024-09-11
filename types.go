@@ -43,7 +43,7 @@ type Reshare struct {
 
 type SignedReshare struct {
 	Reshare Reshare
-	// Signature is an ECDSA signature over proof
+	// Signature is an ECDSA signature over reshare hash
 	Signature []byte `ssz-max:"1536"` // 64 * 24
 }
 

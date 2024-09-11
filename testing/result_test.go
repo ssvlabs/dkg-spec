@@ -5,6 +5,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	spec "github.com/ssvlabs/dkg-spec"
+	spec_crypto "github.com/ssvlabs/dkg-spec/crypto"
 	"github.com/ssvlabs/dkg-spec/testing/fixtures"
 
 	"github.com/stretchr/testify/require"
@@ -34,8 +35,10 @@ func TestBuildResult(t *testing.T) {
 			fixtures.TestNonce,
 			result,
 		))
+		decryptedShare, err := spec_crypto.Decrypt(fixtures.OperatorSK(fixtures.TestOperator1SK), result.SignedProof.Proof.EncryptedShare)
+		require.NoError(t, err)
+		require.EqualValues(t, []byte(fixtures.ShareSK(fixtures.TestValidator4OperatorsShare1).SerializeToHexStr()), decryptedShare)
 	})
-
 }
 
 func TestValidateResults(t *testing.T) {
