@@ -143,11 +143,8 @@ func TestVerifySignedReshare(t *testing.T) {
 	})
 }
 
-func TestVerifyMultisigSignedOffChain3of3(t *testing.T) {
+func TestVerifyMultisigSigned3of3(t *testing.T) {
 	t.Run("valid Gnosis 3/3 miltisig signatures", func(t *testing.T) {
-		_, err := eth_crypto.GenerateKey()
-		require.NoError(t, err)
-
 		gnosisAddress := common.HexToAddress("0x0205c708899bde67330456886a05Fe30De0A79b6")
 
 		ethBackend, err := ethclient.Dial("https://eth-sepolia.g.alchemy.com/v2/YyqRIEgydRXKTTT-w_0jtKSAH6sfr8qz")
@@ -174,11 +171,8 @@ func TestVerifyMultisigSignedOffChain3of3(t *testing.T) {
 	})
 }
 
-func TestVerifyMultisigSignedOffChain2of3(t *testing.T) {
+func TestVerifyMultisigSigned2of3(t *testing.T) {
 	t.Run("valid Gnosis 3/3 miltisig signatures", func(t *testing.T) {
-		_, err := eth_crypto.GenerateKey()
-		require.NoError(t, err)
-
 		gnosisAddress := common.HexToAddress("0x0205c708899bde67330456886a05Fe30De0A79b6")
 
 		ethBackend, err := ethclient.Dial("https://eth-sepolia.g.alchemy.com/v2/YyqRIEgydRXKTTT-w_0jtKSAH6sfr8qz")
@@ -205,11 +199,8 @@ func TestVerifyMultisigSignedOffChain2of3(t *testing.T) {
 	})
 }
 
-func TestVerifyMultisigSignedOffChain1of3(t *testing.T) {
+func TestVerifyMultisigSigned1of3(t *testing.T) {
 	t.Run("valid Gnosis 3/3 miltisig signatures", func(t *testing.T) {
-		_, err := eth_crypto.GenerateKey()
-		require.NoError(t, err)
-
 		gnosisAddress := common.HexToAddress("0x0205c708899bde67330456886a05Fe30De0A79b6")
 
 		ethBackend, err := ethclient.Dial("https://eth-sepolia.g.alchemy.com/v2/YyqRIEgydRXKTTT-w_0jtKSAH6sfr8qz")
