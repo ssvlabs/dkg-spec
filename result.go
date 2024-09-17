@@ -291,13 +291,13 @@ func VerifyPartialDepositDataSignatures(
 		Amount:                crypto.MaxEffectiveBalanceInGwei,
 		WithdrawalCredentials: crypto.ETH1WithdrawalCredentials(withdrawalCredentials)})
 	if err != nil {
-		return fmt.Errorf("failed to compute deposit data root")
+		return fmt.Errorf("failed to compute deposit data root %w", err)
 	}
 
 	// Verify partial signatures and recovered threshold signature
 	err = crypto.VerifyPartialSigs(sigs, pks, shareRoot[:])
 	if err != nil {
-		return fmt.Errorf("failed to verify deposit partial signatures")
+		return fmt.Errorf("failed to verify deposit partial signatures: %w", err)
 	}
 	return nil
 }
