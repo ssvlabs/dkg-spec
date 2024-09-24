@@ -3,6 +3,8 @@ package spec
 import (
 	"fmt"
 	"sort"
+
+	"github.com/attestantio/go-eth2-client/spec/phase0"
 )
 
 // ValidateReshareMessage returns nil if re-share message is valid
@@ -31,7 +33,9 @@ func ValidateReshareMessage(
 	if !ValidThresholdSet(reshare.NewT, reshare.NewOperators) {
 		return fmt.Errorf("new threshold set is invalid")
 	}
-
+	if !ValidAmountSet(phase0.Gwei(reshare.Amount)) {
+		return fmt.Errorf("amount should be in range between 32 ETH and 2048 ETH")
+	}
 	return nil
 }
 
