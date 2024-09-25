@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	spec "github.com/ssvlabs/dkg-spec"
+	"github.com/ssvlabs/dkg-spec/crypto"
 	"github.com/ssvlabs/dkg-spec/testing/fixtures"
 
 	"github.com/stretchr/testify/require"
@@ -41,6 +42,7 @@ func TestValidateInitMessage(t *testing.T) {
 			Fork:                  fixtures.TestFork,
 			Owner:                 fixtures.TestOwnerAddress,
 			Nonce:                 0,
+			Amount:                uint64(crypto.MIN_ACTIVATION_BALANCE),
 		}))
 	})
 
