@@ -20,17 +20,7 @@ When the set of operators changed (including change of size and change of operat
 ---
 
 ## Security Assumptions
-
-All messages are authenticated using the initiator's and operators' public key.
-
-### Init
-The initiator is fully trusted. Meaning it won't deviate from protocol. But it can have crush faults. 
-
-### Re-sign
-The initiator is not trusted. It may try to fool the operators into resigning with the wrong secret shares, owner and nonce. Also since in the resign operation the `owner` may change, and `owner` is used in the `Proof`, all $n$ operators need to participate in the ceremony.
-
-### Reshare
-The initiator is not trusted. It may try to fool the operators into resharing with the wrong secret shares. Or resharing without permission.
+All messages are authenticated using the initiator's and operators' public keys. Initiators and operators are assumed to keep their secret keys secure. An initiator has no motivation to deviate from the protocol or trick operators to create unexpected results, because wrong DKG outputs only damage the initator itself, e.g. operators will not be able to perform duties for the initiator if DKG key shares are incorrect. 
 
 ---
 
