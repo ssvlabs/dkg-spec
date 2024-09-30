@@ -12,10 +12,11 @@ Operations are initiated by an initiator, and executed by operators. An initiato
 When a init message is sent to the operators, all operators participate and run a DKG ceremony to create key shares. A DKG ceremony asks each operator to verifiably share locally generated secrets with other operators, and combine secret shares from all operators to derive its own BLS key share. After the ceremony, each operator generates a **Result** with a **SignedProof** (see below) for verification. Proofs are referred to when an initiator asks for re-sign or reshare. 
 
 ### Re-sign
-In the case where the nonces of a DKG ceremony is not correct, to prevent replay attack, the initiator sends re-sign messages for operators to create new signatures with correct nonces without generating a new validator key. 
+In the case where the nonces of a DKG ceremony is not correct, to prevent replay attack, the initiator sends re-sign messages for operators to create new signatures with correct nonces without generating a new validator key. For operators to perform re-sign, owner's secret key must be used to sign a re-sign message, convincing the operators that the request is regarding a completed ceremony and it is indeed the owner of this ceremony that requested to re-sign.
 
 ### Reshare
-When the set of operators changed (including change of size and change of operators), a reshare is initiated to generate new key shares among the new operators. This process requires participation from *t* old operators and all new operators. 
+When the set of operators changed (including change of size and change of operators), a reshare is initiated to generate new key shares among the new operators. This process requires participation from *t* old operators and all new operators. For operators to perform reshare, owner's secret key must be used to sign a reshare message, convincing the operators that the request is regarding a completed ceremony and it is indeed the owner of this ceremony that requested to reshare.
+
 
 ---
 
