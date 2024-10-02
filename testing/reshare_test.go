@@ -427,4 +427,100 @@ func TestValidateReshare(t *testing.T) {
 			&fixtures.TestOperator1Proof4Operators,
 		), "new threshold set is invalid")
 	})
+	t.Run("valid amount 32 ETH", func(t *testing.T) {
+		require.NoError(t, spec.ValidateReshareMessage(
+			&spec.Reshare{
+				ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				OldOperators:    fixtures.GenerateOperators(4),
+				NewOperators: []*spec.Operator{
+					fixtures.GenerateOperators(7)[0],
+					fixtures.GenerateOperators(7)[1],
+					fixtures.GenerateOperators(7)[2],
+					fixtures.GenerateOperators(7)[3],
+					fixtures.GenerateOperators(7)[4],
+					fixtures.GenerateOperators(7)[5],
+					fixtures.GenerateOperators(10)[7],
+				},
+				OldT:   3,
+				NewT:   5,
+				Owner:  fixtures.TestOwnerAddress,
+				Nonce:  1,
+				Amount: uint64(crypto.MIN_ACTIVATION_BALANCE),
+			},
+			fixtures.GenerateOperators(4)[0],
+			&fixtures.TestOperator1Proof4Operators,
+		))
+	})
+	t.Run("valid amount 2048 ETH", func(t *testing.T) {
+		require.NoError(t, spec.ValidateReshareMessage(
+			&spec.Reshare{
+				ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				OldOperators:    fixtures.GenerateOperators(4),
+				NewOperators: []*spec.Operator{
+					fixtures.GenerateOperators(7)[0],
+					fixtures.GenerateOperators(7)[1],
+					fixtures.GenerateOperators(7)[2],
+					fixtures.GenerateOperators(7)[3],
+					fixtures.GenerateOperators(7)[4],
+					fixtures.GenerateOperators(7)[5],
+					fixtures.GenerateOperators(10)[7],
+				},
+				OldT:   3,
+				NewT:   5,
+				Owner:  fixtures.TestOwnerAddress,
+				Nonce:  1,
+				Amount: uint64(crypto.MAX_EFFECTIVE_BALANCE),
+			},
+			fixtures.GenerateOperators(4)[0],
+			&fixtures.TestOperator1Proof4Operators,
+		))
+	})
+	t.Run("amount < 32 ETH", func(t *testing.T) {
+		require.EqualError(t, spec.ValidateReshareMessage(
+			&spec.Reshare{
+				ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				OldOperators:    fixtures.GenerateOperators(4),
+				NewOperators: []*spec.Operator{
+					fixtures.GenerateOperators(7)[0],
+					fixtures.GenerateOperators(7)[1],
+					fixtures.GenerateOperators(7)[2],
+					fixtures.GenerateOperators(7)[3],
+					fixtures.GenerateOperators(7)[4],
+					fixtures.GenerateOperators(7)[5],
+					fixtures.GenerateOperators(10)[7],
+				},
+				OldT:   3,
+				NewT:   5,
+				Owner:  fixtures.TestOwnerAddress,
+				Nonce:  1,
+				Amount: uint64(crypto.MIN_ACTIVATION_BALANCE - 1),
+			},
+			fixtures.GenerateOperators(4)[0],
+			&fixtures.TestOperator1Proof4Operators,
+		), "amount should be in range between 32 ETH and 2048 ETH")
+	})
+	t.Run("amount > 2048 ETH", func(t *testing.T) {
+		require.EqualError(t, spec.ValidateReshareMessage(
+			&spec.Reshare{
+				ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				OldOperators:    fixtures.GenerateOperators(4),
+				NewOperators: []*spec.Operator{
+					fixtures.GenerateOperators(7)[0],
+					fixtures.GenerateOperators(7)[1],
+					fixtures.GenerateOperators(7)[2],
+					fixtures.GenerateOperators(7)[3],
+					fixtures.GenerateOperators(7)[4],
+					fixtures.GenerateOperators(7)[5],
+					fixtures.GenerateOperators(10)[7],
+				},
+				OldT:   3,
+				NewT:   5,
+				Owner:  fixtures.TestOwnerAddress,
+				Nonce:  1,
+				Amount: uint64(crypto.MAX_EFFECTIVE_BALANCE + 1),
+			},
+			fixtures.GenerateOperators(4)[0],
+			&fixtures.TestOperator1Proof4Operators,
+		), "amount should be in range between 32 ETH and 2048 ETH")
+	})
 }
