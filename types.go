@@ -41,9 +41,14 @@ type Reshare struct {
 	Nonce uint64
 }
 
+type ReshareMessage struct {
+	Reshare *Reshare
+	Proofs  []*SignedProof `ssz-max:"13"`
+}
+
 type SignedReshare struct {
-	Reshare Reshare
-	// Signature is an ECDSA signature over reshare hash
+	Messages []*ReshareMessage `ssz-max:"100"`
+	// Signature is an ECDSA signature over the hash of the resign messages array
 	Signature []byte `ssz-max:"1536"` // 64 * 24
 }
 
@@ -60,9 +65,15 @@ type Resign struct {
 	Nonce uint64
 }
 
+type ResignMessage struct {
+	Operators []*Operator `ssz-max:"13"`
+	Resign    *Resign
+	Proofs    []*SignedProof `ssz-max:"13"`
+}
+
 type SignedResign struct {
-	Resign Resign
-	// Signature is an ECDSA signature over proof
+	Messages []*ResignMessage `ssz-max:"100"`
+	// Signature is an ECDSA signature over the hash of the resign messages array
 	Signature []byte `ssz-max:"1536"` // 64 * 24
 }
 
