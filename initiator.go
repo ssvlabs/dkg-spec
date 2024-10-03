@@ -1,18 +1,23 @@
 package spec
 
 import (
-	"github.com/google/uuid"
+	"fmt"
+
+	eth_crypto "github.com/ethereum/go-ethereum/crypto"
 )
 
 // RunDKG is called when an initiator wants to start a new DKG ceremony
 func RunDKG(init *Init) ([]*Result, error) {
-	id := NewID()
+	id, err := GetReqIDfromMsg(init)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get reqID: %w", err)
+	}
 
 	var results []*Result
 	/*
 		DKG ceremony ...
 	*/
-	_, _, _, err := ValidateResults(
+	_, _, _, err = ValidateResults(
 		init.Operators,
 		init.WithdrawalCredentials,
 		results[0].SignedProof.Proof.ValidatorPubKey,
@@ -25,11 +30,14 @@ func RunDKG(init *Init) ([]*Result, error) {
 }
 
 func RunReshare(signedReshare *SignedReshare) ([][]*Result, error) {
-	id := NewID()
+	id, err := GetReqIDfromMsg(signedReshare)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get reqID: %w", err)
+	}
 
 	var results [][]*Result
 	/*
-		DKG ceremony ...
+		reshare ceremonies ...
 	*/
 	for i, reshareMsg := range signedReshare.Messages {
 		_, _, _, err := ValidateResults(
@@ -49,7 +57,10 @@ func RunReshare(signedReshare *SignedReshare) ([][]*Result, error) {
 }
 
 func RunResign(signedResign *SignedResign) ([][]*Result, error) {
-	id := NewID()
+	id, err := GetReqIDfromMsg(signedResign)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get reqID: %w", err)
+	}
 
 	var results [][]*Result
 	/*
@@ -73,12 +84,49 @@ func RunResign(signedResign *SignedResign) ([][]*Result, error) {
 	return results, nil
 }
 
-// NewID generates a random ID from 2 random concat UUIDs
-func NewID() [24]byte {
-	var id [24]byte
-	b := uuid.New()
-	copy(id[:12], b[:])
-	b = uuid.New()
-	copy(id[12:], b[:])
-	return id
+func GetMessageHash(msg interface{}) ([32]byte, error) {
+	hash := [32]byte{}
+	switch msg := msg.(type) {
+	case SSZMarshaller:
+		// Single message case
+		msgBytes, err := msg.MarshalSSZ()
+		if err != nil {
+			return hash, err
+		}
+		copy(hash[:], eth_crypto.Keccak256(msgBytes))
+	case []*ResignMessage:
+		msgBytes := []byte{}
+		for _, resign := range msg {
+			resignBytes, err := resign.MarshalSSZ()
+			if err != nil {
+				return hash, err
+			}
+			msgBytes = append(msgBytes, resignBytes...)
+		}
+		copy(hash[:], eth_crypto.Keccak256(msgBytes))
+	case []*ReshareMessage:
+		msgBytes := []byte{}
+		for _, reshare := range msg {
+			reshareBytes, err := reshare.MarshalSSZ()
+			if err != nil {
+				return hash, err
+			}
+			msgBytes = append(msgBytes, reshareBytes...)
+		}
+		copy(hash[:], eth_crypto.Keccak256(msgBytes))
+	default:
+		return hash, fmt.Errorf("unexpected message type: %T", msg)
+	}
+	return hash, nil
+}
+
+func GetReqIDfromMsg(instance interface{}) ([24]byte, error) {
+	// make a unique ID for each reshare using the instance hash
+	reqID := [24]byte{}
+	instanceHash, err := GetMessageHash(instance)
+	if err != nil {
+		return reqID, fmt.Errorf("failed to get reqID: %w", err)
+	}
+	copy(reqID[:], instanceHash[:])
+	return reqID, nil
 }

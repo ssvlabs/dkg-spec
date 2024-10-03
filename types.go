@@ -1,5 +1,10 @@
 package spec
 
+type SSZMarshaller interface {
+	MarshalSSZ() ([]byte, error)
+	UnmarshalSSZ(buf []byte) error
+}
+
 type Operator struct {
 	ID     uint64
 	PubKey []byte `ssz-max:"2048"`
