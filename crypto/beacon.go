@@ -10,8 +10,10 @@ import (
 )
 
 const (
-	MaxEffectiveBalanceInGwei phase0.Gwei = 32000000000
-	ETH1WithdrawalPrefixByte              = byte(1)
+	// https://eips.ethereum.org/EIPS/eip-7251
+	MIN_ACTIVATION_BALANCE   phase0.Gwei = 32000000000
+	MAX_EFFECTIVE_BALANCE    phase0.Gwei = 2048000000000
+	ETH1WithdrawalPrefixByte             = byte(1)
 )
 
 // GetNetworkByFork translates the network fork bytes into name
