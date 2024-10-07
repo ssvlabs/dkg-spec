@@ -5,6 +5,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	spec "github.com/ssvlabs/dkg-spec"
+	spec_crypto "github.com/ssvlabs/dkg-spec/crypto"
 	"github.com/ssvlabs/dkg-spec/testing/fixtures"
 
 	"github.com/stretchr/testify/require"
@@ -22,6 +23,7 @@ func TestBuildResult(t *testing.T) {
 			fixtures.TestWithdrawalCred,
 			fixtures.TestFork,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 		)
 		require.NoError(t, err)
 		require.NoError(t, spec.ValidateResult(
@@ -32,10 +34,13 @@ func TestBuildResult(t *testing.T) {
 			fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
 			fixtures.TestFork,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			result,
 		))
+		decryptedShare, err := spec_crypto.Decrypt(fixtures.OperatorSK(fixtures.TestOperator1SK), result.SignedProof.Proof.EncryptedShare)
+		require.NoError(t, err)
+		require.EqualValues(t, []byte(fixtures.ShareSK(fixtures.TestValidator4OperatorsShare1).SerializeToHexStr()), decryptedShare)
 	})
-
 }
 
 func TestValidateResults(t *testing.T) {
@@ -47,6 +52,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestFork,
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			fixtures.TestRequestID,
 			fixtures.Results4Operators()[:3],
 		)
@@ -61,6 +67,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestFork,
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			fixtures.TestRequestID,
 			fixtures.Results4Operators(),
 		)
@@ -75,6 +82,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestFork,
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			fixtures.TestRequestID,
 			fixtures.Results7Operators()[:5],
 		)
@@ -88,6 +96,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestFork,
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			fixtures.TestRequestID,
 			fixtures.Results7Operators()[:6],
 		)
@@ -101,6 +110,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestFork,
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			fixtures.TestRequestID,
 			fixtures.Results7Operators(),
 		)
@@ -115,6 +125,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestFork,
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			fixtures.TestRequestID,
 			fixtures.Results10Operators()[:7],
 		)
@@ -128,6 +139,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestFork,
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			fixtures.TestRequestID,
 			fixtures.Results10Operators()[:8],
 		)
@@ -141,6 +153,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestFork,
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			fixtures.TestRequestID,
 			fixtures.Results10Operators()[:9],
 		)
@@ -154,6 +167,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestFork,
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			fixtures.TestRequestID,
 			fixtures.Results10Operators(),
 		)
@@ -168,6 +182,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestFork,
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			fixtures.TestRequestID,
 			fixtures.Results13Operators()[:9],
 		)
@@ -181,6 +196,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestFork,
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			fixtures.TestRequestID,
 			fixtures.Results13Operators()[:10],
 		)
@@ -194,6 +210,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestFork,
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			fixtures.TestRequestID,
 			fixtures.Results13Operators()[:11],
 		)
@@ -207,6 +224,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestFork,
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			fixtures.TestRequestID,
 			fixtures.Results13Operators()[:12],
 		)
@@ -220,6 +238,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestFork,
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			fixtures.TestRequestID,
 			fixtures.Results13Operators(),
 		)
@@ -247,6 +266,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestFork,
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			fixtures.TestRequestID,
 			res,
 		)
@@ -262,6 +282,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestFork,
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			fixtures.TestRequestID,
 			res,
 		)
@@ -277,6 +298,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestFork,
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			fixtures.TestRequestID,
 			res,
 		)
@@ -299,6 +321,7 @@ func TestValidateResults(t *testing.T) {
 			fixtures.TestFork,
 			fixtures.TestOwnerAddress,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			fixtures.TestRequestID,
 			res,
 		)
@@ -316,6 +339,7 @@ func TestValidateResult(t *testing.T) {
 			fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
 			fixtures.TestFork,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			&spec.Result{
 				OperatorID:                 1,
 				RequestID:                  fixtures.TestRequestID,
@@ -335,6 +359,7 @@ func TestValidateResult(t *testing.T) {
 			fixtures.ShareSK(fixtures.TestValidator7Operators).GetPublicKey().Serialize(),
 			fixtures.TestFork,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			&spec.Result{
 				OperatorID:                 1,
 				RequestID:                  fixtures.TestRequestID,
@@ -354,6 +379,7 @@ func TestValidateResult(t *testing.T) {
 			fixtures.ShareSK(fixtures.TestValidator10Operators).GetPublicKey().Serialize(),
 			fixtures.TestFork,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			&spec.Result{
 				OperatorID:                 1,
 				RequestID:                  fixtures.TestRequestID,
@@ -373,6 +399,7 @@ func TestValidateResult(t *testing.T) {
 			fixtures.ShareSK(fixtures.TestValidator13Operators).GetPublicKey().Serialize(),
 			fixtures.TestFork,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			&spec.Result{
 				OperatorID:                 1,
 				RequestID:                  fixtures.TestRequestID,
@@ -392,6 +419,7 @@ func TestValidateResult(t *testing.T) {
 			fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
 			fixtures.TestFork,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			&spec.Result{
 				OperatorID:                 5,
 				RequestID:                  fixtures.TestRequestID,
@@ -411,6 +439,7 @@ func TestValidateResult(t *testing.T) {
 			fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
 			fixtures.TestFork,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			&spec.Result{
 				OperatorID:                 1,
 				RequestID:                  spec.NewID(),
@@ -430,6 +459,7 @@ func TestValidateResult(t *testing.T) {
 			fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
 			fixtures.TestFork,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			&spec.Result{
 				OperatorID:                 1,
 				RequestID:                  fixtures.TestRequestID,
@@ -449,6 +479,7 @@ func TestValidateResult(t *testing.T) {
 			fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
 			fixtures.TestFork,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			&spec.Result{
 				OperatorID:                 1,
 				RequestID:                  fixtures.TestRequestID,
@@ -468,6 +499,7 @@ func TestValidateResult(t *testing.T) {
 			fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
 			fixtures.TestFork,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			&spec.Result{
 				OperatorID:                 1,
 				RequestID:                  fixtures.TestRequestID,
@@ -493,6 +525,7 @@ func TestValidateResult(t *testing.T) {
 			fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
 			fixtures.TestFork,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			&spec.Result{
 				OperatorID:                 1,
 				RequestID:                  fixtures.TestRequestID,
@@ -519,6 +552,7 @@ func TestValidateResult(t *testing.T) {
 			fixtures.ShareSK(fixtures.TestValidator7Operators).GetPublicKey().Serialize(),
 			fixtures.TestFork,
 			fixtures.TestNonce,
+			fixtures.TestAmount,
 			&spec.Result{
 				OperatorID:                 1,
 				RequestID:                  fixtures.TestRequestID,

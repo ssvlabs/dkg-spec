@@ -1,6 +1,7 @@
 package spec
 
 import (
+	"github.com/attestantio/go-eth2-client/spec/phase0"
 	"github.com/ssvlabs/dkg-spec/eip1271"
 
 	"github.com/google/uuid"
@@ -22,6 +23,7 @@ func RunDKG(init *Init) ([]*Result, error) {
 		init.Fork,
 		init.Owner,
 		init.Nonce,
+		phase0.Gwei(init.Amount),
 		id,
 		results)
 	return results, err
@@ -48,6 +50,7 @@ func RunReshare(
 		fork,
 		signedReshare.Reshare.Owner,
 		signedReshare.Reshare.Nonce,
+		phase0.Gwei(signedReshare.Reshare.Amount),
 		id,
 		results)
 	return results, err
@@ -77,6 +80,7 @@ func RunResign(
 		fork,
 		signedResign.Resign.Owner,
 		signedResign.Resign.Nonce,
+		phase0.Gwei(signedResign.Resign.Amount),
 		id,
 		results)
 	return results, err

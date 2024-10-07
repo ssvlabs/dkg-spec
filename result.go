@@ -22,19 +22,19 @@ func BuildResult(
 	withdrawalCredentials []byte,
 	fork [4]byte,
 	nonce uint64,
+	amount phase0.Gwei,
 ) (*Result, error) {
 	// sign deposit data
 	depositDataRoot, err := crypto.DepositDataRootForFork(
 		fork,
 		validatorPK,
 		withdrawalCredentials,
-		crypto.MaxEffectiveBalanceInGwei,
+		phase0.Gwei(amount),
 	)
 	if err != nil {
 		return nil, err
 	}
 	depositDataSig := share.SignByte(depositDataRoot[:])
-
 	// sign proof
 	encryptedShare, err := crypto.Encrypt(&sk.PublicKey, []byte(share.SerializeToHexStr()))
 	if err != nil {
@@ -75,6 +75,7 @@ func ValidateResults(
 	fork [4]byte,
 	ownerAddress [20]byte,
 	nonce uint64,
+	amount phase0.Gwei,
 	requestID [24]byte,
 	results []*Result,
 ) (*bls.PublicKey, *phase0.DepositData, *bls.Sign, error) {
@@ -102,7 +103,7 @@ func ValidateResults(
 
 	// validate individual result
 	for _, result := range results {
-		if err := ValidateResult(operators, ownerAddress, requestID, withdrawalCredentials, validatorPK, fork, nonce, result); err != nil {
+		if err := ValidateResult(operators, ownerAddress, requestID, withdrawalCredentials, validatorPK, fork, nonce, amount, result); err != nil {
 			return nil, nil, nil, err
 		}
 		pub, deposit, ownerNonce, err := GetPartialSigsFromResult(result)
@@ -130,7 +131,7 @@ func ValidateResults(
 	}
 	depositData := &phase0.DepositData{
 		PublicKey:             phase0.BLSPubKey(validatorRecoveredPK.Serialize()),
-		Amount:                crypto.MaxEffectiveBalanceInGwei,
+		Amount:                phase0.Gwei(amount),
 		WithdrawalCredentials: crypto.ETH1WithdrawalCredentials(withdrawalCredentials),
 		Signature:             phase0.BLSSignature(masterDepositSig.Serialize()),
 	}
@@ -155,6 +156,7 @@ func ValidateResult(
 	validatorPK []byte,
 	fork [4]byte,
 	nonce uint64,
+	amount phase0.Gwei,
 	result *Result,
 ) error {
 	// verify operator
@@ -173,6 +175,7 @@ func ValidateResult(
 		fork,
 		ownerAddress,
 		nonce,
+		amount,
 		result,
 	); err != nil {
 		return fmt.Errorf("failed to verify partial signatures: %v", err)
@@ -218,6 +221,7 @@ func VerifyPartialSignatures(
 	fork [4]byte,
 	ownerAddress [20]byte,
 	nonce uint64,
+	amount phase0.Gwei,
 	result *Result,
 ) error {
 	pk, err := BLSPKEncode(result.SignedProof.Proof.SharePubKey)
@@ -241,6 +245,7 @@ func VerifyPartialSignatures(
 		result.SignedProof.Proof.ValidatorPubKey,
 		[]*bls.Sign{depositSig},
 		[]*bls.PublicKey{pk},
+		amount,
 	); err != nil {
 		return err
 	}
@@ -280,6 +285,7 @@ func VerifyPartialDepositDataSignatures(
 	validatorPubKey []byte,
 	sigs []*bls.Sign,
 	pks []*bls.PublicKey,
+	amount phase0.Gwei,
 ) error {
 	network, err := crypto.GetNetworkByFork(fork)
 	if err != nil {
@@ -288,10 +294,10 @@ func VerifyPartialDepositDataSignatures(
 
 	shareRoot, err := crypto.ComputeDepositMessageSigningRoot(network, &phase0.DepositMessage{
 		PublicKey:             phase0.BLSPubKey(validatorPubKey),
-		Amount:                crypto.MaxEffectiveBalanceInGwei,
+		Amount:                amount,
 		WithdrawalCredentials: crypto.ETH1WithdrawalCredentials(withdrawalCredentials)})
 	if err != nil {
-		return fmt.Errorf("failed to compute deposit data root %w", err)
+		return fmt.Errorf("failed to compute deposit data root: %w", err)
 	}
 
 	// Verify partial signatures and recovered threshold signature

@@ -77,3 +77,7 @@ func EncodeRSAPublicKey(pk *rsa.PublicKey) ([]byte, error) {
 func Encrypt(pub *rsa.PublicKey, msg []byte) ([]byte, error) {
 	return rsa.EncryptPKCS1v15(rand.Reader, pub, msg)
 }
+
+func Decrypt(pk *rsa.PrivateKey, msg []byte) ([]byte, error) {
+	return rsa.DecryptPKCS1v15(rand.Reader, pk, msg)
+}

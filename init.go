@@ -3,6 +3,9 @@ package spec
 import (
 	"bytes"
 	"fmt"
+
+	"github.com/attestantio/go-eth2-client/spec/phase0"
+	"github.com/ssvlabs/dkg-spec/crypto"
 )
 
 // ValidateInitMessage returns nil if init message is valid
@@ -13,7 +16,9 @@ func ValidateInitMessage(init *Init) error {
 	if !ValidThresholdSet(init.T, init.Operators) {
 		return fmt.Errorf("threshold set is invalid")
 	}
-
+	if !ValidAmountSet(phase0.Gwei(init.Amount)) {
+		return fmt.Errorf("amount should be in range between 32 ETH and 2048 ETH")
+	}
 	return nil
 }
 
@@ -77,4 +82,11 @@ func EqualOperators(a, b []*Operator) bool {
 		}
 	}
 	return true
+}
+
+func ValidAmountSet(amount phase0.Gwei) bool {
+	if amount >= crypto.MIN_ACTIVATION_BALANCE && amount <= crypto.MAX_EFFECTIVE_BALANCE {
+		return true
+	}
+	return false
 }

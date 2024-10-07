@@ -1,6 +1,9 @@
 package fixtures
 
-import spec "github.com/ssvlabs/dkg-spec"
+import (
+	spec "github.com/ssvlabs/dkg-spec"
+	"github.com/ssvlabs/dkg-spec/crypto"
+)
 
 var (
 	TestReshare4Operators = spec.Reshare{
@@ -12,10 +15,11 @@ var (
 			GenerateOperators(4)[2],
 			GenerateOperators(7)[4],
 		},
-		OldT:  3,
-		NewT:  3,
-		Owner: TestOwnerAddress,
-		Nonce: 1,
+		OldT:   3,
+		NewT:   3,
+		Owner:  TestOwnerAddress,
+		Nonce:  1,
+		Amount: uint64(crypto.MIN_ACTIVATION_BALANCE),
 	}
 	TestReshare7Operators = spec.Reshare{
 		ValidatorPubKey: ShareSK(TestValidator7Operators).GetPublicKey().Serialize(),
@@ -29,10 +33,11 @@ var (
 			GenerateOperators(7)[5],
 			GenerateOperators(10)[7],
 		},
-		OldT:  5,
-		NewT:  5,
-		Owner: TestOwnerAddress,
-		Nonce: 1,
+		OldT:   5,
+		NewT:   5,
+		Owner:  TestOwnerAddress,
+		Nonce:  1,
+		Amount: uint64(crypto.MIN_ACTIVATION_BALANCE),
 	}
 	TestReshare10Operators = spec.Reshare{
 		ValidatorPubKey: ShareSK(TestValidator10Operators).GetPublicKey().Serialize(),
@@ -49,10 +54,11 @@ var (
 			GenerateOperators(10)[8],
 			GenerateOperators(13)[10],
 		},
-		OldT:  7,
-		NewT:  7,
-		Owner: TestOwnerAddress,
-		Nonce: 1,
+		OldT:   7,
+		NewT:   7,
+		Owner:  TestOwnerAddress,
+		Nonce:  1,
+		Amount: uint64(crypto.MIN_ACTIVATION_BALANCE),
 	}
 	TestReshare13Operators = spec.Reshare{
 		ValidatorPubKey: ShareSK(TestValidator13Operators).GetPublicKey().Serialize(),
@@ -75,9 +81,10 @@ var (
 				PubKey: EncodedOperatorPK(TestOperator14SK),
 			},
 		},
-		OldT:  9,
-		NewT:  9,
-		Owner: TestOwnerAddress,
-		Nonce: 1,
+		OldT:   9,
+		NewT:   9,
+		Owner:  TestOwnerAddress,
+		Nonce:  1,
+		Amount: uint64(crypto.MIN_ACTIVATION_BALANCE),
 	}
 )
