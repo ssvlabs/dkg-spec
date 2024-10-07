@@ -107,7 +107,7 @@ func (op *Operator) Reshare(
 
 		var share *bls.SecretKey
 
-		reqID, err := GetReqIDfromMsg(reshareMsg)
+		reqID, err := GetReqIDFromMsg(reshareMsg)
 		if err != nil {
 			return nil, err
 		}
@@ -173,7 +173,7 @@ func (op *Operator) Resign(
 			return nil, err
 		}
 
-		reqID, err := GetReqIDfromMsg(resignMsg)
+		reqID, err := GetReqIDFromMsg(resignMsg)
 		if err != nil {
 			return nil, err
 		}

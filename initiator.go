@@ -8,7 +8,7 @@ import (
 
 // RunDKG is called when an initiator wants to start a new DKG ceremony
 func RunDKG(init *Init) ([]*Result, error) {
-	id, err := GetReqIDfromMsg(init)
+	id, err := GetReqIDFromMsg(init)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get reqID: %w", err)
 	}
@@ -30,7 +30,7 @@ func RunDKG(init *Init) ([]*Result, error) {
 }
 
 func RunReshare(signedReshare *SignedReshare) ([][]*Result, error) {
-	id, err := GetReqIDfromMsg(signedReshare)
+	id, err := GetReqIDFromMsg(signedReshare)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get reqID: %w", err)
 	}
@@ -57,7 +57,7 @@ func RunReshare(signedReshare *SignedReshare) ([][]*Result, error) {
 }
 
 func RunResign(signedResign *SignedResign) ([][]*Result, error) {
-	id, err := GetReqIDfromMsg(signedResign)
+	id, err := GetReqIDFromMsg(signedResign)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get reqID: %w", err)
 	}
@@ -84,49 +84,27 @@ func RunResign(signedResign *SignedResign) ([][]*Result, error) {
 	return results, nil
 }
 
-func GetMessageHash(msg interface{}) ([32]byte, error) {
+func GetBulkMessageHash(bulkMsg []SSZMarshaller) ([32]byte, error) {
 	hash := [32]byte{}
-	switch msg := msg.(type) {
-	case SSZMarshaller:
-		// Single message case
-		msgBytes, err := msg.MarshalSSZ()
+	msgBytes := []byte{}
+	for _, resign := range bulkMsg {
+		resignBytes, err := resign.MarshalSSZ()
 		if err != nil {
 			return hash, err
 		}
-		copy(hash[:], eth_crypto.Keccak256(msgBytes))
-	case []*ResignMessage:
-		msgBytes := []byte{}
-		for _, resign := range msg {
-			resignBytes, err := resign.MarshalSSZ()
-			if err != nil {
-				return hash, err
-			}
-			msgBytes = append(msgBytes, resignBytes...)
-		}
-		copy(hash[:], eth_crypto.Keccak256(msgBytes))
-	case []*ReshareMessage:
-		msgBytes := []byte{}
-		for _, reshare := range msg {
-			reshareBytes, err := reshare.MarshalSSZ()
-			if err != nil {
-				return hash, err
-			}
-			msgBytes = append(msgBytes, reshareBytes...)
-		}
-		copy(hash[:], eth_crypto.Keccak256(msgBytes))
-	default:
-		return hash, fmt.Errorf("unexpected message type: %T", msg)
+		msgBytes = append(msgBytes, resignBytes...)
 	}
+	copy(hash[:], eth_crypto.Keccak256(msgBytes))
 	return hash, nil
 }
 
-func GetReqIDfromMsg(instance interface{}) ([24]byte, error) {
+func GetReqIDFromMsg(instance SSZMarshaller) ([24]byte, error) {
 	// make a unique ID for each reshare using the instance hash
 	reqID := [24]byte{}
-	instanceHash, err := GetMessageHash(instance)
+	msgBytes, err := instance.MarshalSSZ()
 	if err != nil {
-		return reqID, fmt.Errorf("failed to get reqID: %w", err)
+		return reqID, err
 	}
-	copy(reqID[:], instanceHash[:])
+	copy(reqID[:], eth_crypto.Keccak256(msgBytes))
 	return reqID, nil
 }
