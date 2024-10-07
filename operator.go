@@ -90,14 +90,7 @@ func (op *Operator) Reshare(
 	}
 	// run ceremonies one by one
 	for _, reshareMsg := range signedReshare.Messages {
-		// find proof for this operator
-		position := -1
-		for i, operator := range reshareMsg.Reshare.OldOperators {
-			if operator.ID == op.ID {
-				position = i
-				break
-			}
-		}
+		position := FindOperatorPosition(reshareMsg.Reshare.OldOperators, op.ID)
 		if position != -1 {
 			// this operator is an old operator
 			if err := ValidateReshareMessage(reshareMsg.Reshare, op, reshareMsg.Proofs[position]); err != nil {
@@ -158,14 +151,7 @@ func (op *Operator) Resign(
 	results := make([]*Result, 0)
 	// run ceremonies one by one
 	for _, resignMsg := range signedResign.Messages {
-		// find proof for this operator
-		position := -1
-		for i, operator := range resignMsg.Operators {
-			if operator.ID == op.ID {
-				position = i
-				break
-			}
-		}
+		position := FindOperatorPosition(resignMsg.Operators, op.ID)
 		if position == -1 {
 			return nil, fmt.Errorf("operator not found in the list")
 		}
