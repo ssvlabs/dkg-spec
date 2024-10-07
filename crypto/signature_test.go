@@ -15,6 +15,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const EthRPC string = "https://eth-sepolia.g.alchemy.com/v2/YyqRIEgydRXKTTT-w_0jtKSAH6sfr8qz"
+
 // SSZBytes --
 type SSZBytes []byte
 
@@ -147,7 +149,7 @@ func TestVerifyMultisigSigned3of3(t *testing.T) {
 	t.Run("valid Gnosis 3/3 miltisig signatures", func(t *testing.T) {
 		gnosisAddress := common.HexToAddress("0x0205c708899bde67330456886a05Fe30De0A79b6")
 
-		ethBackend, err := ethclient.Dial("https://eth-sepolia.g.alchemy.com/v2/YyqRIEgydRXKTTT-w_0jtKSAH6sfr8qz")
+		ethBackend, err := ethclient.Dial(EthRPC)
 		require.NoError(t, err)
 		var finalMsg []byte
 		message := []byte("I am the owner of this Safe account")
@@ -175,7 +177,7 @@ func TestVerifyMultisigSigned2of3(t *testing.T) {
 	t.Run("valid Gnosis 3/3 miltisig signatures", func(t *testing.T) {
 		gnosisAddress := common.HexToAddress("0x0205c708899bde67330456886a05Fe30De0A79b6")
 
-		ethBackend, err := ethclient.Dial("https://eth-sepolia.g.alchemy.com/v2/YyqRIEgydRXKTTT-w_0jtKSAH6sfr8qz")
+		ethBackend, err := ethclient.Dial(EthRPC)
 		require.NoError(t, err)
 		var finalMsg []byte
 		message := []byte("I am the owner of this Safe account")
@@ -203,7 +205,7 @@ func TestVerifyMultisigSigned1of3(t *testing.T) {
 	t.Run("valid Gnosis 3/3 miltisig signatures", func(t *testing.T) {
 		gnosisAddress := common.HexToAddress("0x0205c708899bde67330456886a05Fe30De0A79b6")
 
-		ethBackend, err := ethclient.Dial("https://eth-sepolia.g.alchemy.com/v2/YyqRIEgydRXKTTT-w_0jtKSAH6sfr8qz")
+		ethBackend, err := ethclient.Dial(EthRPC)
 		require.NoError(t, err)
 		var finalMsg []byte
 		message := []byte("I am the owner of this Safe account")
