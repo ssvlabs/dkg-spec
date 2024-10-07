@@ -51,7 +51,7 @@ func VerifySignedMessageByOwner(
 		if err != nil {
 			return err
 		}
-		if bytes.Equal(eip1271.MAGIC_VALUE_BYTES[:], res[:]) || bytes.Equal(eip1271.MAGIC_VALUE[:], res[:]) {
+		if bytes.Equal(eip1271.MAGIC_VALUE_PERSONAL_SIGN[:], res[:]) || bytes.Equal(eip1271.MAGIC_VALUE_ETH_SIGN[:], res[:]) {
 			return nil
 		}
 		return fmt.Errorf("invalid eip1271 signature")
