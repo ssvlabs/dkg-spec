@@ -9,7 +9,7 @@ This repository contains spec of distributed key generation (DKG) used in SSV. B
 Operations are initiated by an initiator, and executed by operators. An initiator can initiate:
 
 ### Init
-When a init message is sent to the operators, all operators participate and run a DKG ceremony to create key shares. A DKG ceremony asks each operator to verifiably share locally generated secrets with other operators, and combine secret shares from all operators to derive its own BLS key share. After the ceremony, each operator generates a **Result** with a **SignedProof** (see below) for verification. Proofs are referred to when an initiator asks for re-sign or reshare. 
+When a init message is sent to the operators, all operators participate and run a DKG ceremony to create key shares. A DKG ceremony asks each operator to verifiably share locally generated secrets with other operators, and combine secret shares from all operators to derive its own BLS key share. An init message specifies an owner ethAddress. The owner is the entity that owns the Ethereum validator which the generated secret shares control. After the ceremony, each operator generates a **Result** with a **SignedProof** (see below) for verification. Proofs are referred to when an initiator asks for re-sign or reshare. 
 
 ### Re-sign
 In the case where the nonces of a DKG ceremony is not correct, to prevent replay attack, the initiator sends re-sign messages for operators to create new signatures with correct nonces without generating a new validator key. For operators to perform re-sign, owner's secret key must be used to sign a re-sign message, convincing the operators that the request is regarding a completed ceremony and it is indeed the owner of this ceremony that requested to re-sign.
