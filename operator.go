@@ -3,6 +3,7 @@ package spec
 import (
 	"crypto/rsa"
 
+	"github.com/attestantio/go-eth2-client/spec/phase0"
 	"github.com/herumi/bls-eth-go-binary/bls"
 	"github.com/ssvlabs/dkg-spec/crypto"
 	"github.com/ssvlabs/dkg-spec/eip1271"
@@ -30,7 +31,7 @@ func (op *Operator) Init(
 		init.Fork,
 		validatorPK,
 		init.WithdrawalCredentials,
-		crypto.MaxEffectiveBalanceInGwei,
+		phase0.Gwei(init.Amount),
 	)
 	if err != nil {
 		return nil, err
@@ -77,10 +78,14 @@ func (op *Operator) Reshare(
 	sk *rsa.PrivateKey,
 	client eip1271.ETHClient,
 ) (*Result, error) {
+	hash, err := signedReshare.HashTreeRoot()
+	if err != nil {
+		return nil, err
+	}
 	if err := crypto.VerifySignedMessageByOwner(
 		client,
 		signedReshare.Reshare.Owner,
-		signedReshare,
+		hash,
 		signedReshare.Signature,
 	); err != nil {
 		return nil, err
@@ -106,6 +111,7 @@ func (op *Operator) Reshare(
 		signedReshare.Reshare.WithdrawalCredentials,
 		signedReshare.Reshare.Fork,
 		signedReshare.Reshare.Nonce,
+		phase0.Gwei(signedReshare.Reshare.Amount),
 	)
 }
 
@@ -118,10 +124,14 @@ func (op *Operator) Resign(
 	sk *rsa.PrivateKey, // operator's encryption private key
 	client eip1271.ETHClient,
 ) (*Result, error) {
+	hash, err := signedResign.HashTreeRoot()
+	if err != nil {
+		return nil, err
+	}
 	if err := crypto.VerifySignedMessageByOwner(
 		client,
 		signedResign.Resign.Owner,
-		signedResign,
+		hash,
 		signedResign.Signature,
 	); err != nil {
 		return nil, err
@@ -140,5 +150,6 @@ func (op *Operator) Resign(
 		signedResign.Resign.WithdrawalCredentials,
 		signedResign.Resign.Fork,
 		signedResign.Resign.Nonce,
+		phase0.Gwei(signedResign.Resign.Amount),
 	)
 }
