@@ -231,6 +231,7 @@ func TestValidateResign(t *testing.T) {
 				ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
 				Owner:           fixtures.TestOwnerAddress,
 				Nonce:           1,
+				Amount:          uint64(crypto.MIN_ACTIVATION_BALANCE),
 			},
 			fixtures.GenerateOperators(4)[0],
 			&fixtures.TestOperator2Proof4Operators,
