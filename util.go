@@ -2,11 +2,11 @@ package spec
 
 import eth_crypto "github.com/ethereum/go-ethereum/crypto"
 
-func GetBulkMessageHash(bulkMsg []SSZMarshaller) ([32]byte, error) {
+func GetBulkMessageHash(bulkMsg []*SSZMarshaller) ([32]byte, error) {
 	hash := [32]byte{}
 	msgBytes := []byte{}
 	for _, resign := range bulkMsg {
-		resignBytes, err := resign.MarshalSSZ()
+		resignBytes, err := (*resign).MarshalSSZ()
 		if err != nil {
 			return hash, err
 		}

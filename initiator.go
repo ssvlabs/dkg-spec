@@ -1,15 +1,9 @@
 package spec
 
 import (
-<<<<<<< HEAD
 	"fmt"
-=======
-	"github.com/attestantio/go-eth2-client/spec/phase0"
-	"github.com/ssvlabs/dkg-spec/eip1271"
 
-	"github.com/google/uuid"
-	"golang.org/x/exp/maps"
->>>>>>> master
+	"github.com/attestantio/go-eth2-client/spec/phase0"
 )
 
 // RunDKG is called when an initiator wants to start a new DKG ceremony
