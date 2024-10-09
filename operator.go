@@ -81,7 +81,11 @@ func (op *Operator) Reshare(
 	if len(signedReshare.Messages) == 0 {
 		return nil, fmt.Errorf("no reshare messages")
 	}
-	MsgHash, err := GetBulkMessageHash(signedReshare.Messages)
+	reshareMsgs := make([]SSZMarshaller, 0)
+	for _, msg := range signedReshare.Messages {
+		reshareMsgs = append(reshareMsgs, msg)
+	}
+	MsgHash, err := GetBulkMessageHash(reshareMsgs)
 	if err != nil {
 		return nil, err
 	}
@@ -147,10 +151,18 @@ func (op *Operator) Resign(
 	if len(signedResign.Messages) == 0 {
 		return nil, fmt.Errorf("no reshare messages")
 	}
-	if err := crypto.VerifySignedMessageByOwner(
+	resignMsgs := make([]SSZMarshaller, 0)
+	for _, msg := range signedResign.Messages {
+		resignMsgs = append(resignMsgs, msg)
+	}
+	MsgHash, err := GetBulkMessageHash(resignMsgs)
+	if err != nil {
+		return nil, err
+	}
+	if err = crypto.VerifySignedMessageByOwner(
 		client,
 		signedResign.Messages[0].Resign.Owner,
-		signedResign,
+		MsgHash,
 		signedResign.Signature,
 	); err != nil {
 		return nil, err
