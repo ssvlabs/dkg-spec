@@ -16,10 +16,10 @@ func GetBulkMessageHash(bulkMsg []SSZMarshaller) ([32]byte, error) {
 	return hash, nil
 }
 
-func GetReqIDFromMsg(instance SSZMarshaller) ([24]byte, error) {
+func GetReqIDFromMsg(message SSZMarshaller) ([24]byte, error) {
 	// make a unique ID for each reshare using the instance hash
 	reqID := [24]byte{}
-	msgBytes, err := instance.MarshalSSZ()
+	msgBytes, err := message.MarshalSSZ()
 	if err != nil {
 		return reqID, err
 	}
