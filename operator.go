@@ -4,6 +4,7 @@ import (
 	"crypto/rsa"
 	"fmt"
 
+	"github.com/attestantio/go-eth2-client/spec/phase0"
 	"github.com/herumi/bls-eth-go-binary/bls"
 	"github.com/ssvlabs/dkg-spec/crypto"
 	"github.com/ssvlabs/dkg-spec/eip1271"
@@ -31,7 +32,7 @@ func (op *Operator) Init(
 		init.Fork,
 		validatorPK,
 		init.WithdrawalCredentials,
-		crypto.MaxEffectiveBalanceInGwei,
+		phase0.Gwei(init.Amount),
 	)
 	if err != nil {
 		return nil, err
@@ -127,7 +128,30 @@ func (op *Operator) Reshare(
 		}
 		results = append(results, result)
 	}
+<<<<<<< HEAD
 	return results, nil
+=======
+
+	var share *bls.SecretKey
+	/*
+		reshare ceremony
+		All new participants must participate
+		T out of old participants must participate
+	*/
+
+	return BuildResult(
+		op.ID,
+		requestID,
+		share,
+		sk,
+		signedReshare.Reshare.ValidatorPubKey,
+		signedReshare.Reshare.Owner,
+		signedReshare.Reshare.WithdrawalCredentials,
+		signedReshare.Reshare.Fork,
+		signedReshare.Reshare.Nonce,
+		phase0.Gwei(signedReshare.Reshare.Amount),
+	)
+>>>>>>> master
 }
 
 // Resign is called when an operator receives a re-sign message
@@ -136,6 +160,7 @@ func (op *Operator) Resign(
 	share *bls.SecretKey,
 	sk *rsa.PrivateKey, // operator's encryption private key
 	client eip1271.ETHClient,
+<<<<<<< HEAD
 ) ([]*Result, error) {
 	if len(signedResign.Messages) == 0 {
 		return nil, fmt.Errorf("no reshare messages")
@@ -144,6 +169,17 @@ func (op *Operator) Resign(
 		client,
 		signedResign.Messages[0].Resign.Owner,
 		signedResign,
+=======
+) (*Result, error) {
+	hash, err := signedResign.HashTreeRoot()
+	if err != nil {
+		return nil, err
+	}
+	if err := crypto.VerifySignedMessageByOwner(
+		client,
+		signedResign.Resign.Owner,
+		hash,
+>>>>>>> master
 		signedResign.Signature,
 	); err != nil {
 		return nil, err
@@ -159,6 +195,7 @@ func (op *Operator) Resign(
 			return nil, err
 		}
 
+<<<<<<< HEAD
 		reqID, err := GetReqIDFromMsg(resignMsg)
 		if err != nil {
 			return nil, err
@@ -185,4 +222,18 @@ func (op *Operator) Resign(
 		results = append(results, result)
 	}
 	return results, nil
+=======
+	return BuildResult(
+		op.ID,
+		requestID,
+		share,
+		sk,
+		signedResign.Resign.ValidatorPubKey,
+		signedResign.Resign.Owner,
+		signedResign.Resign.WithdrawalCredentials,
+		signedResign.Resign.Fork,
+		signedResign.Resign.Nonce,
+		phase0.Gwei(signedResign.Resign.Amount),
+	)
+>>>>>>> master
 }

@@ -120,7 +120,7 @@ func TestSignDeposit(t *testing.T) {
 	require.NoError(t, err)
 	shareRoot, err := crypto.ComputeDepositMessageSigningRoot(network, &phase0.DepositMessage{
 		PublicKey:             phase0.BLSPubKey(ShareSK(TestValidator13Operators).GetPublicKey().Serialize()),
-		Amount:                crypto.MaxEffectiveBalanceInGwei,
+		Amount:                crypto.MIN_ACTIVATION_BALANCE,
 		WithdrawalCredentials: crypto.ETH1WithdrawalCredentials(TestWithdrawalCred)})
 	require.NoError(t, err)
 

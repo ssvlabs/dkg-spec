@@ -23,6 +23,8 @@ type Init struct {
 	Owner [20]byte `ssz-size:"20"`
 	// Owner nonce
 	Nonce uint64
+	// Amount in Gwei (https://eips.ethereum.org/EIPS/eip-7251)
+	Amount uint64
 }
 
 type Reshare struct {
@@ -44,6 +46,8 @@ type Reshare struct {
 	Owner [20]byte `ssz-size:"20"`
 	// Owner nonce
 	Nonce uint64
+	// Amount in Gwei (https://eips.ethereum.org/EIPS/eip-7251)
+	Amount uint64
 }
 
 type ReshareMessage struct {
@@ -68,6 +72,8 @@ type Resign struct {
 	Owner [20]byte `ssz-size:"20"`
 	// Owner nonce
 	Nonce uint64
+	// Amount in Gwei (https://eips.ethereum.org/EIPS/eip-7251)
+	Amount uint64
 }
 
 type ResignMessage struct {

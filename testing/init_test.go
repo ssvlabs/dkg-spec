@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	spec "github.com/ssvlabs/dkg-spec"
+	"github.com/ssvlabs/dkg-spec/crypto"
 	"github.com/ssvlabs/dkg-spec/testing/fixtures"
 
 	"github.com/stretchr/testify/require"
@@ -41,9 +42,20 @@ func TestValidateInitMessage(t *testing.T) {
 			Fork:                  fixtures.TestFork,
 			Owner:                 fixtures.TestOwnerAddress,
 			Nonce:                 0,
+			Amount:                uint64(crypto.MIN_ACTIVATION_BALANCE),
 		}))
 	})
-
+	t.Run("valid", func(t *testing.T) {
+		require.NoError(t, spec.ValidateInitMessage(&spec.Init{
+			Operators:             fixtures.GenerateOperators(4),
+			T:                     3,
+			WithdrawalCredentials: fixtures.TestWithdrawalCred,
+			Fork:                  fixtures.TestFork,
+			Owner:                 fixtures.TestOwnerAddress,
+			Nonce:                 0,
+			Amount:                uint64(crypto.MAX_EFFECTIVE_BALANCE),
+		}))
+	})
 	t.Run("disordered operators", func(t *testing.T) {
 		require.EqualError(t, spec.ValidateInitMessage(&spec.Init{
 			Operators: []*spec.Operator{
@@ -57,6 +69,7 @@ func TestValidateInitMessage(t *testing.T) {
 			Fork:                  fixtures.TestFork,
 			Owner:                 fixtures.TestOwnerAddress,
 			Nonce:                 0,
+			Amount:                uint64(crypto.MIN_ACTIVATION_BALANCE),
 		}), "operators not unique or not ordered")
 	})
 	t.Run("non unique operators", func(t *testing.T) {
@@ -72,6 +85,7 @@ func TestValidateInitMessage(t *testing.T) {
 			Fork:                  fixtures.TestFork,
 			Owner:                 fixtures.TestOwnerAddress,
 			Nonce:                 0,
+			Amount:                uint64(crypto.MIN_ACTIVATION_BALANCE),
 		}), "operators not unique or not ordered")
 	})
 	t.Run("no operators", func(t *testing.T) {
@@ -82,6 +96,7 @@ func TestValidateInitMessage(t *testing.T) {
 			Fork:                  fixtures.TestFork,
 			Owner:                 fixtures.TestOwnerAddress,
 			Nonce:                 0,
+			Amount:                uint64(crypto.MIN_ACTIVATION_BALANCE),
 		}), "threshold set is invalid")
 	})
 	t.Run("nil operators", func(t *testing.T) {
@@ -92,6 +107,7 @@ func TestValidateInitMessage(t *testing.T) {
 			Fork:                  fixtures.TestFork,
 			Owner:                 fixtures.TestOwnerAddress,
 			Nonce:                 0,
+			Amount:                uint64(crypto.MIN_ACTIVATION_BALANCE),
 		}), "threshold set is invalid")
 	})
 	t.Run("non 3f+1 operators", func(t *testing.T) {
@@ -106,6 +122,7 @@ func TestValidateInitMessage(t *testing.T) {
 			Fork:                  fixtures.TestFork,
 			Owner:                 fixtures.TestOwnerAddress,
 			Nonce:                 0,
+			Amount:                uint64(crypto.MIN_ACTIVATION_BALANCE),
 		}), "threshold set is invalid")
 	})
 	t.Run("non 3f+1 operators", func(t *testing.T) {
@@ -122,6 +139,7 @@ func TestValidateInitMessage(t *testing.T) {
 			Fork:                  fixtures.TestFork,
 			Owner:                 fixtures.TestOwnerAddress,
 			Nonce:                 0,
+			Amount:                uint64(crypto.MIN_ACTIVATION_BALANCE),
 		}), "threshold set is invalid")
 	})
 	t.Run("non 2f+1 threshold", func(t *testing.T) {
@@ -132,6 +150,29 @@ func TestValidateInitMessage(t *testing.T) {
 			Fork:                  fixtures.TestFork,
 			Owner:                 fixtures.TestOwnerAddress,
 			Nonce:                 0,
+			Amount:                uint64(crypto.MIN_ACTIVATION_BALANCE),
 		}), "threshold set is invalid")
+	})
+	t.Run("amount < 32 ETH", func(t *testing.T) {
+		require.EqualError(t, spec.ValidateInitMessage(&spec.Init{
+			Operators:             fixtures.GenerateOperators(4),
+			T:                     3,
+			WithdrawalCredentials: fixtures.TestWithdrawalCred,
+			Fork:                  fixtures.TestFork,
+			Owner:                 fixtures.TestOwnerAddress,
+			Nonce:                 0,
+			Amount:                uint64(crypto.MIN_ACTIVATION_BALANCE - 1),
+		}), "amount should be in range between 32 ETH and 2048 ETH")
+	})
+	t.Run("amount > 2048 ETH", func(t *testing.T) {
+		require.EqualError(t, spec.ValidateInitMessage(&spec.Init{
+			Operators:             fixtures.GenerateOperators(4),
+			T:                     3,
+			WithdrawalCredentials: fixtures.TestWithdrawalCred,
+			Fork:                  fixtures.TestFork,
+			Owner:                 fixtures.TestOwnerAddress,
+			Nonce:                 0,
+			Amount:                uint64(crypto.MAX_EFFECTIVE_BALANCE + 1),
+		}), "amount should be in range between 32 ETH and 2048 ETH")
 	})
 }
