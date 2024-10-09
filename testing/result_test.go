@@ -442,7 +442,7 @@ func TestValidateResult(t *testing.T) {
 			fixtures.TestAmount,
 			&spec.Result{
 				OperatorID:                 1,
-				RequestID:                  spec.NewID(),
+				RequestID:                  [24]byte{},
 				DepositPartialSignature:    fixtures.DecodeHexNoError(fixtures.TestOperator1DepositSignature4Operators),
 				OwnerNoncePartialSignature: fixtures.DecodeHexNoError(fixtures.TestOperator1NonceSignature4Operators),
 				SignedProof:                fixtures.TestOperator1Proof4Operators,
