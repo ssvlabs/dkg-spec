@@ -1,6 +1,9 @@
 package spec
 
-import eth_crypto "github.com/ethereum/go-ethereum/crypto"
+import (
+	eth_crypto "github.com/ethereum/go-ethereum/crypto"
+	"github.com/google/uuid"
+)
 
 func GetBulkMessageHash(bulkMsg []SSZMarshaller) ([32]byte, error) {
 	hash := [32]byte{}
@@ -36,4 +39,14 @@ func FindOperatorPosition(operators []*Operator, id uint64) int {
 		}
 	}
 	return position
+}
+
+// NewID generates a random ID from 2 random concat UUIDs
+func NewID() [24]byte {
+	var id [24]byte
+	b := uuid.New()
+	copy(id[:12], b[:])
+	b = uuid.New()
+	copy(id[12:], b[:])
+	return id
 }
