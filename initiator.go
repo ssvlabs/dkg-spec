@@ -1,23 +1,18 @@
 package spec
 
 import (
-	"fmt"
-
 	"github.com/attestantio/go-eth2-client/spec/phase0"
 )
 
 // RunDKG is called when an initiator wants to start a new DKG ceremony
 func RunDKG(init *Init) ([]*Result, error) {
-	id, err := GetReqIDFromMsg(init)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get reqID: %w", err)
-	}
+	id := NewID()
 
 	var results []*Result
 	/*
 		DKG ceremony ...
 	*/
-	_, _, _, err = ValidateResults(
+	_, _, _, err := ValidateResults(
 		init.Operators,
 		init.WithdrawalCredentials,
 		results[0].SignedProof.Proof.ValidatorPubKey,
@@ -31,10 +26,7 @@ func RunDKG(init *Init) ([]*Result, error) {
 }
 
 func RunReshare(signedReshare *SignedReshare) ([][]*Result, error) {
-	id, err := GetReqIDFromMsg(signedReshare)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get reqID: %w", err)
-	}
+	id := NewID()
 
 	var results [][]*Result
 	/*
@@ -59,10 +51,7 @@ func RunReshare(signedReshare *SignedReshare) ([][]*Result, error) {
 }
 
 func RunResign(signedResign *SignedResign) ([][]*Result, error) {
-	id, err := GetReqIDFromMsg(signedResign)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get reqID: %w", err)
-	}
+	id := NewID()
 
 	var results [][]*Result
 	/*
