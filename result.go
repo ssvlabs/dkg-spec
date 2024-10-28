@@ -170,6 +170,11 @@ func ValidateResult(
 		return fmt.Errorf("invalid request ID")
 	}
 
+	// verify owner address
+	if !bytes.Equal(ownerAddress[:], result.SignedProof.Proof.Owner[:]) {
+		return fmt.Errorf("invalid owner address")
+	}
+
 	if err := VerifyPartialSignatures(
 		withdrawalCredentials,
 		fork,
@@ -183,7 +188,6 @@ func ValidateResult(
 
 	// verify ceremony proof
 	if err := ValidateCeremonyProof(
-		ownerAddress,
 		validatorPK,
 		operator,
 		result.SignedProof,

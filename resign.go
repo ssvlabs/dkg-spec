@@ -15,7 +15,7 @@ func ValidateResignMessage(
 	if !ValidAmountSet(phase0.Gwei(resign.Amount)) {
 		return fmt.Errorf("amount should be in range between 32 ETH and 2048 ETH")
 	}
-	if err := ValidateCeremonyProof(resign.Owner, resign.ValidatorPubKey, operator, *proof); err != nil {
+	if err := ValidateCeremonyProof(resign.ValidatorPubKey, operator, *proof); err != nil {
 		return err
 	}
 

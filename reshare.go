@@ -1,6 +1,7 @@
 package spec
 
 import (
+	"bytes"
 	"fmt"
 	"sort"
 
@@ -17,8 +18,12 @@ func ValidateReshareMessage(
 		return fmt.Errorf("old operators are not unique and ordered")
 	}
 
-	if err := ValidateCeremonyProof(reshare.Owner, reshare.ValidatorPubKey, operator, *proof); err != nil {
+	if err := ValidateCeremonyProof(reshare.ValidatorPubKey, operator, *proof); err != nil {
 		return err
+	}
+	// verify owner address
+	if !bytes.Equal(reshare.Owner[:], proof.Proof.Owner[:]) {
+		return fmt.Errorf("invalid owner address")
 	}
 
 	if !UniqueAndOrderedOperators(reshare.NewOperators) {
