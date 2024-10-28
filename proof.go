@@ -12,6 +12,10 @@ func ValidateCeremonyProof(
 	operator *Operator,
 	signedProof SignedProof,
 ) error {
+	// verify owner address is not zero address
+	if bytes.Equal(signedProof.Proof.Owner[:], make([]byte, 20)) {
+		return fmt.Errorf("invalid proof owner address")
+	}
 	// verify validator pk
 	if !bytes.Equal(validatorPK, signedProof.Proof.ValidatorPubKey) {
 		return fmt.Errorf("invalid proof validator pubkey")
