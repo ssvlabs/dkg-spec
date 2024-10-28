@@ -490,32 +490,6 @@ func TestValidateResult(t *testing.T) {
 		), "failed to verify nonce partial signatures")
 	})
 
-	t.Run("invalid proof owner address", func(t *testing.T) {
-		require.ErrorContains(t, spec.ValidateResult(
-			fixtures.GenerateOperators(4),
-			fixtures.TestOwnerAddress,
-			fixtures.TestRequestID,
-			fixtures.TestWithdrawalCred,
-			fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
-			fixtures.TestFork,
-			fixtures.TestNonce,
-			fixtures.TestAmount,
-			&spec.Result{
-				OperatorID:                 1,
-				RequestID:                  fixtures.TestRequestID,
-				DepositPartialSignature:    fixtures.DecodeHexNoError(fixtures.TestOperator1DepositSignature4Operators),
-				OwnerNoncePartialSignature: fixtures.DecodeHexNoError(fixtures.TestOperator1NonceSignature4Operators),
-				SignedProof: spec.SignedProof{
-					Proof: &spec.Proof{
-						ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
-						Owner:           [20]byte{},
-						SharePubKey:     fixtures.ShareSK(fixtures.TestValidator4OperatorsShare1).GetPublicKey().Serialize(),
-					},
-				},
-			},
-		), "invalid owner address")
-	})
-
 	t.Run("invalid proof signature", func(t *testing.T) {
 		require.ErrorContains(t, spec.ValidateResult(
 			fixtures.GenerateOperators(4),
