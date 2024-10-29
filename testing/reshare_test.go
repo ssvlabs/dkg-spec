@@ -293,6 +293,33 @@ func TestValidateReshare(t *testing.T) {
 		), "old operators are not unique and ordered")
 	})
 
+	t.Run("invalid owner address", func(t *testing.T) {
+		require.EqualError(t, spec.ValidateReshareMessage(
+			&spec.Reshare{
+				ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				OldOperators: []*spec.Operator{
+					fixtures.GenerateOperators(4)[0],
+					fixtures.GenerateOperators(4)[1],
+					fixtures.GenerateOperators(4)[2],
+					fixtures.GenerateOperators(4)[3],
+				},
+				NewOperators: []*spec.Operator{
+					fixtures.GenerateOperators(4)[0],
+					fixtures.GenerateOperators(4)[1],
+					fixtures.GenerateOperators(4)[2],
+					fixtures.GenerateOperators(7)[4],
+				},
+				OldT:   3,
+				NewT:   3,
+				Owner:  fixtures.TestOwnerNewAddress,
+				Nonce:  1,
+				Amount: uint64(crypto.MIN_ACTIVATION_BALANCE),
+			},
+			fixtures.GenerateOperators(4)[0],
+			&fixtures.TestOperator1Proof4Operators,
+		), "invalid owner address")
+	})
+
 	t.Run("invalid proof", func(t *testing.T) {
 		require.EqualError(t, spec.ValidateReshareMessage(
 			&spec.Reshare{

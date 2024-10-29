@@ -18,14 +18,14 @@ func ValidateReshareMessage(
 		return fmt.Errorf("old operators are not unique and ordered")
 	}
 
-	if err := ValidateCeremonyProof(reshare.ValidatorPubKey, operator, *proof); err != nil {
-		return err
-	}
 	// verify owner address
 	if !bytes.Equal(reshare.Owner[:], proof.Proof.Owner[:]) {
 		return fmt.Errorf("invalid owner address")
 	}
 
+	if err := ValidateCeremonyProof(reshare.ValidatorPubKey, operator, *proof); err != nil {
+		return err
+	}
 	if !UniqueAndOrderedOperators(reshare.NewOperators) {
 		return fmt.Errorf("new operators are not unique and ordered")
 	}
