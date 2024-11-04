@@ -237,6 +237,7 @@ func TestValidateResign(t *testing.T) {
 			fixtures.GenerateOperators(4)[0],
 			&fixtures.TestOperator1Proof4Operators))
 	})
+
 	t.Run("invalid proof", func(t *testing.T) {
 		require.EqualError(t, spec.ValidateResignMessage(
 			&spec.Resign{
