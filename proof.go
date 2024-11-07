@@ -8,12 +8,12 @@ import (
 )
 
 func ValidateCeremonyProof(
-	ownerAddress [20]byte,
 	validatorPK []byte,
 	operator *Operator,
 	signedProof SignedProof,
 ) error {
-	if !bytes.Equal(ownerAddress[:], signedProof.Proof.Owner[:]) {
+	// verify owner address is not zero address
+	if bytes.Equal(signedProof.Proof.Owner[:], make([]byte, 20)) {
 		return fmt.Errorf("invalid owner address")
 	}
 	// verify validator pk

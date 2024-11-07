@@ -490,7 +490,7 @@ func TestValidateResult(t *testing.T) {
 		), "failed to verify nonce partial signatures")
 	})
 
-	t.Run("invalid proof owner address", func(t *testing.T) {
+	t.Run("invalid proof owner zero address", func(t *testing.T) {
 		require.ErrorContains(t, spec.ValidateResult(
 			fixtures.GenerateOperators(4),
 			fixtures.TestOwnerAddress,

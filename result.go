@@ -183,7 +183,6 @@ func ValidateResult(
 
 	// verify ceremony proof
 	if err := ValidateCeremonyProof(
-		ownerAddress,
 		validatorPK,
 		operator,
 		result.SignedProof,

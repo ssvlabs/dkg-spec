@@ -225,6 +225,19 @@ func TestValidateResign(t *testing.T) {
 		))
 	})
 
+	t.Run("add owner address", func(t *testing.T) {
+		require.NoError(t, spec.ValidateResignMessage(&spec.Resign{
+			ValidatorPubKey:       fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+			WithdrawalCredentials: fixtures.TestWithdrawalCred,
+			Fork:                  fixtures.TestFork,
+			Owner:                 fixtures.TestOwnerNewAddress,
+			Nonce:                 0,
+			Amount:                uint64(crypto.MAX_EFFECTIVE_BALANCE),
+		},
+			fixtures.GenerateOperators(4)[0],
+			&fixtures.TestOperator1Proof4Operators))
+	})
+
 	t.Run("invalid proof", func(t *testing.T) {
 		require.EqualError(t, spec.ValidateResignMessage(
 			&spec.Resign{
