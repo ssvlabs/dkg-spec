@@ -19,6 +19,6 @@ var InvalidSigValue = [4]byte{0xff, 0xff, 0xff, 0xff}
 
 type ETHClient interface {
 	BlockNumber(ctx context.Context) (uint64, error)
-	NetworkID(ctx context.Context) (*big.Int, error)
+	ChainID(ctx context.Context) (*big.Int, error)
 	bind.ContractBackend
 }

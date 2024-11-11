@@ -27,14 +27,14 @@ func VerifySignedMessageByOwner(
 	if isEOASignature {
 		// EIP 155 https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
 		if signature[64] == 27 || signature[64] == 28 {
-			//{0,1} + 27
+			// v = {0,1} + 27
 			signature[64] -= byte(27)
 		} else if signature[64] != 0 && signature[64] != 1 {
-			//{0,1} + CHAIN_ID * 2 + 35
-			chainID, err := client.NetworkID(context.Background())
+			chainID, err := client.ChainID(context.Background())
 			if err != nil {
 				return err
 			}
+			// v = {0,1} + CHAIN_ID * 2 + 35
 			signature[64] -= byte(chainID.Uint64()*2 + 35)
 		}
 

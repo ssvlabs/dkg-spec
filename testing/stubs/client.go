@@ -18,7 +18,7 @@ func (c *Client) BlockNumber(ctx context.Context) (uint64, error) {
 	return 100, nil
 }
 
-func (c *Client) NetworkID(ctx context.Context) (*big.Int, error) {
+func (c *Client) ChainID(ctx context.Context) (*big.Int, error) {
 	big := big.NewInt(1)
 	return big, nil
 }

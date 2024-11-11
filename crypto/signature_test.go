@@ -84,6 +84,36 @@ func TestVerifySignedReshare(t *testing.T) {
 			sig), "invalid EOA signature")
 	})
 
+	t.Run("valid EIP155 EOA signature", func(t *testing.T) {
+		stubClient := &stubs.Client{
+			CallContractF: func(call ethereum.CallMsg) ([]byte, error) {
+				return nil, nil
+			},
+		}
+		// based on https://etherscan.io/verifySig/260391
+		address := common.HexToAddress("0x5acdc73e2e418c51d77f9a209379a4cd0b7ffb71")
+		sig, err := hex.DecodeString("da16d6616c9291dab5d0c1afe706d0431dbdce26b2472bd5294eda42f8d6861f53f06551129874cb3172a0774c1e9c4bb28b1176ac947f692e6fab679f665a941b")
+		require.NoError(t, err)
+
+		var finalMsg []byte
+		message := []byte("assetify")
+		prefix := []byte("\x19Ethereum Signed Message:\n")
+		len := []byte(strconv.Itoa(len(message)))
+
+		finalMsg = append(finalMsg, prefix...)
+		finalMsg = append(finalMsg, len...)
+		finalMsg = append(finalMsg, message...)
+
+		var hash [32]byte
+		keccak256 := eth_crypto.Keccak256(finalMsg)
+		copy(hash[:], keccak256)
+
+		require.NoError(t, VerifySignedMessageByOwner(stubClient,
+			address,
+			hash,
+			sig))
+	})
+
 	t.Run("valid contract signature", func(t *testing.T) {
 		sk, err := eth_crypto.GenerateKey()
 		require.NoError(t, err)
