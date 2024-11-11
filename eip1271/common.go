@@ -2,6 +2,7 @@ package eip1271
 
 import (
 	"context"
+	"math/big"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
@@ -18,5 +19,6 @@ var InvalidSigValue = [4]byte{0xff, 0xff, 0xff, 0xff}
 
 type ETHClient interface {
 	BlockNumber(ctx context.Context) (uint64, error)
+	ChainID(ctx context.Context) (*big.Int, error)
 	bind.ContractBackend
 }

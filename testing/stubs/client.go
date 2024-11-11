@@ -18,6 +18,11 @@ func (c *Client) BlockNumber(ctx context.Context) (uint64, error) {
 	return 100, nil
 }
 
+func (c *Client) ChainID(ctx context.Context) (*big.Int, error) {
+	big := big.NewInt(1)
+	return big, nil
+}
+
 func (c *Client) CodeAt(ctx context.Context, contract common.Address, blockNumber *big.Int) ([]byte, error) {
 	if c.CodeAtMap[contract] {
 		return make([]byte, 1024), nil
