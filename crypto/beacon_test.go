@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"github.com/attestantio/go-eth2-client/spec/phase0"
-	"github.com/bloxapp/eth2-key-manager/core"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/herumi/bls-eth-go-binary/bls"
+	"github.com/ssvlabs/eth2-key-manager/core"
 	"github.com/stretchr/testify/require"
 )
 
