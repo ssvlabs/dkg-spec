@@ -20,8 +20,11 @@ const (
 //
 //	TODO: once eth2_key_manager implements this we can get rid of it and support all networks ekm supports automatically
 func GetNetworkByFork(fork [4]byte) (core.Network, error) {
-
 	switch fork {
+	case [4]byte{0x90, 0x00, 0x00, 0x69}:
+		return core.SepoliaNetwork, nil
+	case [4]byte{0x10, 0x00, 0x09, 0x10}:
+		return core.HoodiNetwork, nil
 	case [4]byte{0x00, 0x00, 0x10, 0x20}:
 		return core.PraterNetwork, nil
 	case [4]byte{0x01, 0x01, 0x70, 0x00}:

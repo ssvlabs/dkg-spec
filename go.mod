@@ -3,12 +3,12 @@ module github.com/ssvlabs/dkg-spec
 go 1.24
 
 require (
-	github.com/attestantio/go-eth2-client v0.24.0
+	github.com/attestantio/go-eth2-client v0.24.1
 	github.com/ethereum/go-ethereum v1.15.4
 	github.com/ferranbt/fastssz v0.1.4
 	github.com/google/uuid v1.6.0
 	github.com/herumi/bls-eth-go-binary v1.36.4
-	github.com/ssvlabs/eth2-key-manager v1.5.1
+	github.com/ssvlabs/eth2-key-manager v1.5.3
 	github.com/stretchr/testify v1.10.0
 	github.com/wealdtech/go-eth2-types/v2 v2.8.2
 )
