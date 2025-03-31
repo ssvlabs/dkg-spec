@@ -16,26 +16,6 @@ const (
 	ETH1WithdrawalPrefixByte             = byte(1)
 )
 
-// GetNetworkByFork translates the network fork bytes into name
-//
-//	TODO: once eth2_key_manager implements this we can get rid of it and support all networks ekm supports automatically
-func GetNetworkByFork(fork [4]byte) (core.Network, error) {
-	switch fork {
-	case [4]byte{0x90, 0x00, 0x00, 0x69}:
-		return core.SepoliaNetwork, nil
-	case [4]byte{0x10, 0x00, 0x09, 0x10}:
-		return core.HoodiNetwork, nil
-	case [4]byte{0x00, 0x00, 0x10, 0x20}:
-		return core.PraterNetwork, nil
-	case [4]byte{0x01, 0x01, 0x70, 0x00}:
-		return core.HoleskyNetwork, nil
-	case [4]byte{0, 0, 0, 0}:
-		return core.MainNetwork, nil
-	default:
-		return core.MainNetwork, fmt.Errorf("unknown network")
-	}
-}
-
 func ETH1WithdrawalCredentials(withdrawalAddr []byte) []byte {
 	withdrawalCredentials := make([]byte, 32)
 	copy(withdrawalCredentials[:1], []byte{ETH1WithdrawalPrefixByte})
@@ -107,7 +87,7 @@ func DepositDataRootForFork(
 	withdrawalCredentials []byte,
 	amount phase0.Gwei,
 ) (phase0.Root, error) {
-	network, err := GetNetworkByFork(fork)
+	network, err := core.NetworkFromForkVersion(fork)
 	if err != nil {
 		return phase0.Root{}, err
 	}
