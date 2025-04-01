@@ -9,6 +9,7 @@ import (
 
 	spec "github.com/ssvlabs/dkg-spec"
 	"github.com/ssvlabs/dkg-spec/crypto"
+	"github.com/ssvlabs/eth2-key-manager/core"
 
 	"github.com/attestantio/go-eth2-client/spec/phase0"
 	"github.com/ethereum/go-ethereum/common"
@@ -116,7 +117,7 @@ func TestSignNonce(t *testing.T) {
 }
 
 func TestSignDeposit(t *testing.T) {
-	network, err := crypto.GetNetworkByFork(TestFork)
+	network, err := core.NetworkFromForkVersion(TestFork)
 	require.NoError(t, err)
 	shareRoot, err := crypto.ComputeDepositMessageSigningRoot(network, &phase0.DepositMessage{
 		PublicKey:             phase0.BLSPubKey(ShareSK(TestValidator13Operators).GetPublicKey().Serialize()),

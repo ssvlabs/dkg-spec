@@ -8,7 +8,7 @@ require (
 	github.com/ferranbt/fastssz v0.1.4
 	github.com/google/uuid v1.6.0
 	github.com/herumi/bls-eth-go-binary v1.36.4
-	github.com/ssvlabs/eth2-key-manager v1.5.3
+	github.com/ssvlabs/eth2-key-manager v1.5.4
 	github.com/stretchr/testify v1.10.0
 	github.com/wealdtech/go-eth2-types/v2 v2.8.2
 )

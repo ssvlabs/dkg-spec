@@ -10,6 +10,7 @@ import (
 	eth_crypto "github.com/ethereum/go-ethereum/crypto"
 	"github.com/herumi/bls-eth-go-binary/bls"
 	"github.com/ssvlabs/dkg-spec/crypto"
+	"github.com/ssvlabs/eth2-key-manager/core"
 )
 
 func BuildResult(
@@ -125,7 +126,7 @@ func ValidateResults(
 	if err != nil {
 		return nil, nil, nil, err
 	}
-	network, err := crypto.GetNetworkByFork(fork)
+	network, err := core.NetworkFromForkVersion(fork)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -286,7 +287,7 @@ func VerifyPartialDepositDataSignatures(
 	pks []*bls.PublicKey,
 	amount phase0.Gwei,
 ) error {
-	network, err := crypto.GetNetworkByFork(fork)
+	network, err := core.NetworkFromForkVersion(fork)
 	if err != nil {
 		return err
 	}
