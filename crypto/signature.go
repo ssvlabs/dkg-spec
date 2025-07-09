@@ -60,7 +60,7 @@ func VerifySignedMessageByOwner(
 		}
 		res, err := signerVerification.IsValidSignature(&bind.CallOpts{
 			Context: context.Background(),
-		}, hash[:], signature)
+		}, hash, signature)
 		if err != nil {
 			return err
 		}

@@ -31,7 +31,7 @@ var (
 
 // Eip1271MetaData contains all meta data concerning the Eip1271 contract.
 var Eip1271MetaData = &bind.MetaData{
-	ABI: "[{\"constant\":true,\"inputs\":[{\"name\":\"_data\",\"type\":\"bytes\"},{\"name\":\"_signature\",\"type\":\"bytes\"}],\"name\":\"isValidSignature\",\"outputs\":[{\"name\":\"magicValue\",\"type\":\"bytes4\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]",
+	ABI: "[{\"constant\":true,\"inputs\":[{\"name\":\"_hash\",\"type\":\"bytes32\"},{\"name\":\"_signature\",\"type\":\"bytes\"}],\"name\":\"isValidSignature\",\"outputs\":[{\"name\":\"magicValue\",\"type\":\"bytes4\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]",
 }
 
 // Eip1271ABI is the input ABI used to generate the binding from.
@@ -180,12 +180,12 @@ func (_Eip1271 *Eip1271TransactorRaw) Transact(opts *bind.TransactOpts, method s
 	return _Eip1271.Contract.contract.Transact(opts, method, params...)
 }
 
-// IsValidSignature is a free data retrieval call binding the contract method 0x20c13b0b.
+// IsValidSignature is a free data retrieval call binding the contract method 0x1626ba7e.
 //
-// Solidity: function isValidSignature(bytes _data, bytes _signature) view returns(bytes4 magicValue)
-func (_Eip1271 *Eip1271Caller) IsValidSignature(opts *bind.CallOpts, _data []byte, _signature []byte) ([4]byte, error) {
+// Solidity: function isValidSignature(bytes32 _hash, bytes _signature) view returns(bytes4 magicValue)
+func (_Eip1271 *Eip1271Caller) IsValidSignature(opts *bind.CallOpts, _hash [32]byte, _signature []byte) ([4]byte, error) {
 	var out []interface{}
-	err := _Eip1271.contract.Call(opts, &out, "isValidSignature", _data, _signature)
+	err := _Eip1271.contract.Call(opts, &out, "isValidSignature", _hash, _signature)
 
 	if err != nil {
 		return *new([4]byte), err
@@ -197,16 +197,16 @@ func (_Eip1271 *Eip1271Caller) IsValidSignature(opts *bind.CallOpts, _data []byt
 
 }
 
-// IsValidSignature is a free data retrieval call binding the contract method 0x20c13b0b.
+// IsValidSignature is a free data retrieval call binding the contract method 0x1626ba7e.
 //
-// Solidity: function isValidSignature(bytes _data, bytes _signature) view returns(bytes4 magicValue)
-func (_Eip1271 *Eip1271Session) IsValidSignature(_data []byte, _signature []byte) ([4]byte, error) {
-	return _Eip1271.Contract.IsValidSignature(&_Eip1271.CallOpts, _data, _signature)
+// Solidity: function isValidSignature(bytes32 _hash, bytes _signature) view returns(bytes4 magicValue)
+func (_Eip1271 *Eip1271Session) IsValidSignature(_hash [32]byte, _signature []byte) ([4]byte, error) {
+	return _Eip1271.Contract.IsValidSignature(&_Eip1271.CallOpts, _hash, _signature)
 }
 
-// IsValidSignature is a free data retrieval call binding the contract method 0x20c13b0b.
+// IsValidSignature is a free data retrieval call binding the contract method 0x1626ba7e.
 //
-// Solidity: function isValidSignature(bytes _data, bytes _signature) view returns(bytes4 magicValue)
-func (_Eip1271 *Eip1271CallerSession) IsValidSignature(_data []byte, _signature []byte) ([4]byte, error) {
-	return _Eip1271.Contract.IsValidSignature(&_Eip1271.CallOpts, _data, _signature)
+// Solidity: function isValidSignature(bytes32 _hash, bytes _signature) view returns(bytes4 magicValue)
+func (_Eip1271 *Eip1271CallerSession) IsValidSignature(_hash [32]byte, _signature []byte) ([4]byte, error) {
+	return _Eip1271.Contract.IsValidSignature(&_Eip1271.CallOpts, _hash, _signature)
 }
