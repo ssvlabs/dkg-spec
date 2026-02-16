@@ -11,17 +11,31 @@ import (
 
 const (
 	// https://eips.ethereum.org/EIPS/eip-7251
-	MIN_ACTIVATION_BALANCE   phase0.Gwei = 32000000000
-	MAX_EFFECTIVE_BALANCE    phase0.Gwei = 2048000000000
-	ETH1WithdrawalPrefixByte             = byte(1)
+	MIN_ACTIVATION_BALANCE      phase0.Gwei = 32000000000
+	MAX_EFFECTIVE_BALANCE       phase0.Gwei = 2048000000000
+	ETH1WithdrawalPrefix                    = byte(1)
+	CompoundingWithdrawalPrefix             = byte(2)
 )
 
-func ETH1WithdrawalCredentials(withdrawalAddr []byte) []byte {
-	withdrawalCredentials := make([]byte, 32)
-	copy(withdrawalCredentials[:1], []byte{ETH1WithdrawalPrefixByte})
-	// withdrawalCredentials[1:12] == b'\x00' * 11 // this is not needed since cells are zeroed anyway
-	copy(withdrawalCredentials[12:], withdrawalAddr)
-	return withdrawalCredentials
+// WithdrawalCredentials constructs 32-byte withdrawal credentials from a prefix byte and a 20-byte address.
+func WithdrawalCredentials(prefix byte, withdrawalAddr []byte) []byte {
+	creds := make([]byte, 32)
+	creds[0] = prefix
+	copy(creds[12:], withdrawalAddr)
+	return creds
+}
+
+// ValidateWithdrawalCredentials checks that credentials are exactly 32 bytes with a valid prefix (0x01 or 0x02).
+// Bytes [1:12] (zero padding) are not enforced — the Ethereum beacon chain accepts any padding,
+// and WithdrawalCredentials() always zero-pads.
+func ValidateWithdrawalCredentials(creds []byte) error {
+	if len(creds) != 32 {
+		return fmt.Errorf("withdrawal credentials must be 32 bytes, got %d", len(creds))
+	}
+	if creds[0] != ETH1WithdrawalPrefix && creds[0] != CompoundingWithdrawalPrefix {
+		return fmt.Errorf("invalid withdrawal credential prefix: 0x%02x", creds[0])
+	}
+	return nil
 }
 
 func ComputeDepositMessageSigningRoot(network core.Network, message *phase0.DepositMessage) (phase0.Root, error) {
@@ -91,8 +105,12 @@ func DepositDataRootForFork(
 	if err != nil {
 		return phase0.Root{}, err
 	}
+	if err := ValidateWithdrawalCredentials(withdrawalCredentials); err != nil {
+		return phase0.Root{}, err
+	}
 	return ComputeDepositMessageSigningRoot(network, &phase0.DepositMessage{
 		PublicKey:             phase0.BLSPubKey(validatorPK),
 		Amount:                amount,
-		WithdrawalCredentials: ETH1WithdrawalCredentials(withdrawalCredentials)})
+		WithdrawalCredentials: withdrawalCredentials,
+	})
 }

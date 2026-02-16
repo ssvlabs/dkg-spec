@@ -130,10 +130,13 @@ func ValidateResults(
 	if err != nil {
 		return nil, nil, nil, err
 	}
+	if err := crypto.ValidateWithdrawalCredentials(withdrawalCredentials); err != nil {
+		return nil, nil, nil, err
+	}
 	depositData := &phase0.DepositData{
 		PublicKey:             phase0.BLSPubKey(validatorRecoveredPK.Serialize()),
 		Amount:                phase0.Gwei(amount),
-		WithdrawalCredentials: crypto.ETH1WithdrawalCredentials(withdrawalCredentials),
+		WithdrawalCredentials: withdrawalCredentials,
 		Signature:             phase0.BLSSignature(masterDepositSig.Serialize()),
 	}
 	err = crypto.VerifyDepositData(network, depositData)
@@ -292,10 +295,14 @@ func VerifyPartialDepositDataSignatures(
 		return err
 	}
 
+	if err := crypto.ValidateWithdrawalCredentials(withdrawalCredentials); err != nil {
+		return err
+	}
 	shareRoot, err := crypto.ComputeDepositMessageSigningRoot(network, &phase0.DepositMessage{
 		PublicKey:             phase0.BLSPubKey(validatorPubKey),
 		Amount:                amount,
-		WithdrawalCredentials: crypto.ETH1WithdrawalCredentials(withdrawalCredentials)})
+		WithdrawalCredentials: withdrawalCredentials,
+	})
 	if err != nil {
 		return fmt.Errorf("failed to compute deposit data root: %w", err)
 	}

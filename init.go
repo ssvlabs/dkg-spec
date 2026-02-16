@@ -19,6 +19,9 @@ func ValidateInitMessage(init *Init) error {
 	if !ValidAmountSet(phase0.Gwei(init.Amount)) {
 		return fmt.Errorf("amount should be in range between 32 ETH and 2048 ETH")
 	}
+	if err := crypto.ValidateWithdrawalCredentials(init.WithdrawalCredentials); err != nil {
+		return fmt.Errorf("invalid withdrawal credentials: %w", err)
+	}
 	return nil
 }
 

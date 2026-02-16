@@ -329,6 +329,75 @@ func TestValidateResults(t *testing.T) {
 	})
 }
 
+func TestBuildAndValidateResults_0x02(t *testing.T) {
+	type operatorSet struct {
+		name      string
+		count     int
+		valSK     string
+		shareSKs  []string
+		operators func() []*spec.Operator
+	}
+	sets := []operatorSet{
+		{
+			name:  "4 operators",
+			count: 4,
+			valSK: fixtures.TestValidator4Operators,
+			shareSKs: []string{
+				fixtures.TestValidator4OperatorsShare1,
+				fixtures.TestValidator4OperatorsShare2,
+				fixtures.TestValidator4OperatorsShare3,
+				fixtures.TestValidator4OperatorsShare4,
+			},
+			operators: func() []*spec.Operator { return fixtures.GenerateOperators(4) },
+		},
+	}
+
+	operatorSKs := []string{
+		fixtures.TestOperator1SK,
+		fixtures.TestOperator2SK,
+		fixtures.TestOperator3SK,
+		fixtures.TestOperator4SK,
+	}
+
+	for _, s := range sets {
+		t.Run(s.name, func(t *testing.T) {
+			valPK := fixtures.ShareSK(s.valSK).GetPublicKey().Serialize()
+			ops := s.operators()
+
+			results := make([]*spec.Result, s.count)
+			for i := 0; i < s.count; i++ {
+				var err error
+				results[i], err = spec.BuildResult(
+					ops[i].ID,
+					fixtures.TestRequestID,
+					fixtures.ShareSK(s.shareSKs[i]),
+					fixtures.OperatorSK(operatorSKs[i]),
+					valPK,
+					fixtures.TestOwnerAddress,
+					fixtures.TestWithdrawalCred0x02,
+					fixtures.TestFork,
+					fixtures.TestNonce,
+					fixtures.TestAmount,
+				)
+				require.NoError(t, err)
+			}
+
+			_, _, _, err := spec.ValidateResults(
+				ops,
+				fixtures.TestWithdrawalCred0x02,
+				valPK,
+				fixtures.TestFork,
+				fixtures.TestOwnerAddress,
+				fixtures.TestNonce,
+				fixtures.TestAmount,
+				fixtures.TestRequestID,
+				results,
+			)
+			require.NoError(t, err)
+		})
+	}
+}
+
 func TestValidateResult(t *testing.T) {
 	t.Run("valid 4 operators", func(t *testing.T) {
 		require.NoError(t, spec.ValidateResult(
