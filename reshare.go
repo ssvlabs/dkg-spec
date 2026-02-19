@@ -6,6 +6,8 @@ import (
 	"sort"
 
 	"github.com/attestantio/go-eth2-client/spec/phase0"
+
+	"github.com/ssvlabs/dkg-spec/crypto"
 )
 
 // ValidateReshareMessage returns nil if re-share message is valid
@@ -40,6 +42,9 @@ func ValidateReshareMessage(
 	}
 	if !ValidAmountSet(phase0.Gwei(reshare.Amount)) {
 		return fmt.Errorf("amount should be in range between 32 ETH and 2048 ETH")
+	}
+	if err := crypto.ValidateWithdrawalCredentials(reshare.WithdrawalCredentials); err != nil {
+		return fmt.Errorf("invalid withdrawal credentials: %w", err)
 	}
 	return nil
 }

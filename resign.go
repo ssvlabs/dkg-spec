@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/attestantio/go-eth2-client/spec/phase0"
+
+	"github.com/ssvlabs/dkg-spec/crypto"
 )
 
 // ValidateResignMessage returns nil if re-sign message is valid
@@ -18,6 +20,8 @@ func ValidateResignMessage(
 	if err := ValidateCeremonyProof(resign.ValidatorPubKey, operator, *proof); err != nil {
 		return err
 	}
-
+	if err := crypto.ValidateWithdrawalCredentials(resign.WithdrawalCredentials); err != nil {
+		return fmt.Errorf("invalid withdrawal credentials: %w", err)
+	}
 	return nil
 }

@@ -228,8 +228,9 @@ func TestValidateReshare(t *testing.T) {
 	t.Run("reshare 4->7 operators", func(t *testing.T) {
 		require.NoError(t, spec.ValidateReshareMessage(
 			&spec.Reshare{
-				ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
-				OldOperators:    fixtures.GenerateOperators(4),
+				ValidatorPubKey:       fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				WithdrawalCredentials: fixtures.TestWithdrawalCred,
+				OldOperators:          fixtures.GenerateOperators(4),
 				NewOperators: []*spec.Operator{
 					fixtures.GenerateOperators(7)[0],
 					fixtures.GenerateOperators(7)[1],
@@ -253,14 +254,15 @@ func TestValidateReshare(t *testing.T) {
 	t.Run("reshare 7->4 operators", func(t *testing.T) {
 		require.NoError(t, spec.ValidateReshareMessage(
 			&spec.Reshare{
-				ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator7Operators).GetPublicKey().Serialize(),
-				OldOperators:    fixtures.GenerateOperators(7),
-				NewOperators:    fixtures.GenerateOperators(4),
-				OldT:            5,
-				NewT:            3,
-				Owner:           fixtures.TestOwnerAddress,
-				Nonce:           1,
-				Amount:          uint64(crypto.MIN_ACTIVATION_BALANCE),
+				ValidatorPubKey:       fixtures.ShareSK(fixtures.TestValidator7Operators).GetPublicKey().Serialize(),
+				WithdrawalCredentials: fixtures.TestWithdrawalCred,
+				OldOperators:          fixtures.GenerateOperators(7),
+				NewOperators:          fixtures.GenerateOperators(4),
+				OldT:                  5,
+				NewT:                  3,
+				Owner:                 fixtures.TestOwnerAddress,
+				Nonce:                 1,
+				Amount:                uint64(crypto.MIN_ACTIVATION_BALANCE),
 			},
 			fixtures.GenerateOperators(7)[0],
 			&fixtures.TestOperator1Proof7Operators,
@@ -457,8 +459,9 @@ func TestValidateReshare(t *testing.T) {
 	t.Run("valid amount 32 ETH", func(t *testing.T) {
 		require.NoError(t, spec.ValidateReshareMessage(
 			&spec.Reshare{
-				ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
-				OldOperators:    fixtures.GenerateOperators(4),
+				ValidatorPubKey:       fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				WithdrawalCredentials: fixtures.TestWithdrawalCred,
+				OldOperators:          fixtures.GenerateOperators(4),
 				NewOperators: []*spec.Operator{
 					fixtures.GenerateOperators(7)[0],
 					fixtures.GenerateOperators(7)[1],
@@ -481,8 +484,9 @@ func TestValidateReshare(t *testing.T) {
 	t.Run("valid amount 2048 ETH", func(t *testing.T) {
 		require.NoError(t, spec.ValidateReshareMessage(
 			&spec.Reshare{
-				ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
-				OldOperators:    fixtures.GenerateOperators(4),
+				ValidatorPubKey:       fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				WithdrawalCredentials: fixtures.TestWithdrawalCred,
+				OldOperators:          fixtures.GenerateOperators(4),
 				NewOperators: []*spec.Operator{
 					fixtures.GenerateOperators(7)[0],
 					fixtures.GenerateOperators(7)[1],
