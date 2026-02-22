@@ -325,7 +325,8 @@ func TestValidateReshare(t *testing.T) {
 	t.Run("invalid proof", func(t *testing.T) {
 		require.EqualError(t, spec.ValidateReshareMessage(
 			&spec.Reshare{
-				ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				ValidatorPubKey:       fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				WithdrawalCredentials: fixtures.TestWithdrawalCred,
 				OldOperators: []*spec.Operator{
 					fixtures.GenerateOperators(4)[0],
 					fixtures.GenerateOperators(4)[1],
@@ -352,7 +353,8 @@ func TestValidateReshare(t *testing.T) {
 	t.Run("new operators not unique", func(t *testing.T) {
 		require.EqualError(t, spec.ValidateReshareMessage(
 			&spec.Reshare{
-				ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				ValidatorPubKey:       fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				WithdrawalCredentials: fixtures.TestWithdrawalCred,
 				OldOperators: []*spec.Operator{
 					fixtures.GenerateOperators(4)[0],
 					fixtures.GenerateOperators(4)[1],
@@ -379,7 +381,8 @@ func TestValidateReshare(t *testing.T) {
 	t.Run("new operators same as old", func(t *testing.T) {
 		require.EqualError(t, spec.ValidateReshareMessage(
 			&spec.Reshare{
-				ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				ValidatorPubKey:       fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				WithdrawalCredentials: fixtures.TestWithdrawalCred,
 				OldOperators: []*spec.Operator{
 					fixtures.GenerateOperators(4)[0],
 					fixtures.GenerateOperators(4)[1],
@@ -406,7 +409,8 @@ func TestValidateReshare(t *testing.T) {
 	t.Run("invalid old threshold", func(t *testing.T) {
 		require.EqualError(t, spec.ValidateReshareMessage(
 			&spec.Reshare{
-				ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				ValidatorPubKey:       fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				WithdrawalCredentials: fixtures.TestWithdrawalCred,
 				OldOperators: []*spec.Operator{
 					fixtures.GenerateOperators(4)[0],
 					fixtures.GenerateOperators(4)[1],
@@ -433,7 +437,8 @@ func TestValidateReshare(t *testing.T) {
 	t.Run("invalid new threshold", func(t *testing.T) {
 		require.EqualError(t, spec.ValidateReshareMessage(
 			&spec.Reshare{
-				ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				ValidatorPubKey:       fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				WithdrawalCredentials: fixtures.TestWithdrawalCred,
 				OldOperators: []*spec.Operator{
 					fixtures.GenerateOperators(4)[0],
 					fixtures.GenerateOperators(4)[1],
@@ -509,8 +514,9 @@ func TestValidateReshare(t *testing.T) {
 	t.Run("amount < 32 ETH", func(t *testing.T) {
 		require.EqualError(t, spec.ValidateReshareMessage(
 			&spec.Reshare{
-				ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
-				OldOperators:    fixtures.GenerateOperators(4),
+				ValidatorPubKey:       fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				WithdrawalCredentials: fixtures.TestWithdrawalCred,
+				OldOperators:          fixtures.GenerateOperators(4),
 				NewOperators: []*spec.Operator{
 					fixtures.GenerateOperators(7)[0],
 					fixtures.GenerateOperators(7)[1],
@@ -533,8 +539,9 @@ func TestValidateReshare(t *testing.T) {
 	t.Run("amount > 2048 ETH", func(t *testing.T) {
 		require.EqualError(t, spec.ValidateReshareMessage(
 			&spec.Reshare{
-				ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
-				OldOperators:    fixtures.GenerateOperators(4),
+				ValidatorPubKey:       fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				WithdrawalCredentials: fixtures.TestWithdrawalCred,
+				OldOperators:          fixtures.GenerateOperators(4),
 				NewOperators: []*spec.Operator{
 					fixtures.GenerateOperators(7)[0],
 					fixtures.GenerateOperators(7)[1],

@@ -24,6 +24,9 @@ func ValidateReshareMessage(
 	if !bytes.Equal(reshare.Owner[:], proof.Proof.Owner[:]) {
 		return fmt.Errorf("invalid owner address")
 	}
+	if err := crypto.ValidateWithdrawalCredentials(reshare.WithdrawalCredentials); err != nil {
+		return fmt.Errorf("invalid withdrawal credentials: %w", err)
+	}
 
 	if err := ValidateCeremonyProof(reshare.ValidatorPubKey, operator, *proof); err != nil {
 		return err
@@ -42,9 +45,6 @@ func ValidateReshareMessage(
 	}
 	if !ValidAmountSet(phase0.Gwei(reshare.Amount)) {
 		return fmt.Errorf("amount should be in range between 32 ETH and 2048 ETH")
-	}
-	if err := crypto.ValidateWithdrawalCredentials(reshare.WithdrawalCredentials); err != nil {
-		return fmt.Errorf("invalid withdrawal credentials: %w", err)
 	}
 	return nil
 }
