@@ -14,8 +14,8 @@ import (
 )
 
 var (
-	TestWithdrawalCred     = crypto.WithdrawalCredentials(crypto.ETH1WithdrawalPrefix, make([]byte, 20))
-	TestWithdrawalCred0x02 = crypto.WithdrawalCredentials(crypto.CompoundingWithdrawalPrefix, TestOwnerAddress.Bytes())
+	TestWithdrawalCred     = crypto.WithdrawalCredentials(crypto.ETH1WithdrawalPrefix, [20]byte{})
+	TestWithdrawalCred0x02 = crypto.WithdrawalCredentials(crypto.CompoundingWithdrawalPrefix, TestOwnerAddress)
 	TestFork               = [4]byte{0, 0, 0, 0}
 	TestNonce              = uint64(0)
 	TestOwnerAddress       = common.Address{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}

@@ -18,10 +18,10 @@ const (
 )
 
 // WithdrawalCredentials constructs 32-byte withdrawal credentials from a prefix byte and a 20-byte address.
-func WithdrawalCredentials(prefix byte, withdrawalAddr []byte) []byte {
+func WithdrawalCredentials(prefix byte, withdrawalAddr [20]byte) []byte {
 	creds := make([]byte, 32)
 	creds[0] = prefix
-	copy(creds[12:], withdrawalAddr)
+	copy(creds[12:], withdrawalAddr[:])
 	return creds
 }
 

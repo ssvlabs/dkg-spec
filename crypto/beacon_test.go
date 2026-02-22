@@ -13,17 +13,17 @@ import (
 func TestWithdrawalCredentials(t *testing.T) {
 	t.Run("0x01 from hex address", func(t *testing.T) {
 		eth1Address := common.HexToAddress("d999bc994e0274235b65ca72ec430b8de3eb7df9")
-		require.EqualValues(t, WithdrawalCredentials(ETH1WithdrawalPrefix, eth1Address[:]), []byte{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xd9, 0x99, 0xbc, 0x99, 0x4e, 0x2, 0x74, 0x23, 0x5b, 0x65, 0xca, 0x72, 0xec, 0x43, 0xb, 0x8d, 0xe3, 0xeb, 0x7d, 0xf9})
+		require.EqualValues(t, WithdrawalCredentials(ETH1WithdrawalPrefix, eth1Address), []byte{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xd9, 0x99, 0xbc, 0x99, 0x4e, 0x2, 0x74, 0x23, 0x5b, 0x65, 0xca, 0x72, 0xec, 0x43, 0xb, 0x8d, 0xe3, 0xeb, 0x7d, 0xf9})
 	})
 
 	t.Run("0x01 from byte address", func(t *testing.T) {
 		eth1Address := common.Address{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
-		require.EqualValues(t, WithdrawalCredentials(ETH1WithdrawalPrefix, eth1Address[:]), []byte{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20})
+		require.EqualValues(t, WithdrawalCredentials(ETH1WithdrawalPrefix, eth1Address), []byte{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20})
 	})
 
 	t.Run("0x02 compounding", func(t *testing.T) {
 		addr := common.Address{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
-		creds := WithdrawalCredentials(CompoundingWithdrawalPrefix, addr[:])
+		creds := WithdrawalCredentials(CompoundingWithdrawalPrefix, addr)
 
 		require.Len(t, creds, 32)
 		require.Equal(t, byte(2), creds[0], "first byte should be 0x02")
@@ -36,7 +36,7 @@ func TestWithdrawalCredentials(t *testing.T) {
 
 func TestComputeDepositMessageSigningRoot(t *testing.T) {
 	// Effective 20-byte address used across signing root tests.
-	addr := []byte{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8}
+	addr := [20]byte{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8}
 
 	t.Run("mainnet", func(t *testing.T) {
 		r, err := ComputeDepositMessageSigningRoot(core.MainNetwork, &phase0.DepositMessage{
@@ -60,7 +60,7 @@ func TestComputeDepositMessageSigningRoot(t *testing.T) {
 }
 
 func TestDepositDataRootForFork(t *testing.T) {
-	addr := []byte{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8}
+	addr := [20]byte{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8}
 
 	t.Run("mainnet", func(t *testing.T) {
 		r, err := DepositDataRootForFork(
@@ -93,16 +93,16 @@ func TestValidateWithdrawalCredentials(t *testing.T) {
 	}{
 		{
 			name:  "valid 32-byte 0x01",
-			input: WithdrawalCredentials(ETH1WithdrawalPrefix, []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}),
+			input: WithdrawalCredentials(ETH1WithdrawalPrefix, [20]byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}),
 		},
 		{
 			name:  "valid 32-byte 0x02",
-			input: WithdrawalCredentials(CompoundingWithdrawalPrefix, []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}),
+			input: WithdrawalCredentials(CompoundingWithdrawalPrefix, [20]byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}),
 		},
 		{
 			name: "non-zero padding accepted",
 			input: func() []byte {
-				c := WithdrawalCredentials(ETH1WithdrawalPrefix, make([]byte, 20))
+				c := WithdrawalCredentials(ETH1WithdrawalPrefix, [20]byte{})
 				c[5] = 0xFF
 				return c
 			}(),
@@ -148,7 +148,7 @@ func TestValidateWithdrawalCredentials(t *testing.T) {
 
 func TestDepositDataRootForFork_0x02(t *testing.T) {
 	t.Run("mainnet 0x02", func(t *testing.T) {
-		creds := WithdrawalCredentials(CompoundingWithdrawalPrefix, []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20})
+		creds := WithdrawalCredentials(CompoundingWithdrawalPrefix, [20]byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20})
 		_, err := DepositDataRootForFork(
 			phase0.Version{0, 0, 0, 0},
 			[]byte{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -167,7 +167,7 @@ func TestVerifyDepositData_0x02(t *testing.T) {
 	pk := phase0.BLSPubKey{}
 	copy(pk[:], sk.GetPublicKey().Serialize())
 
-	creds := WithdrawalCredentials(CompoundingWithdrawalPrefix, []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20})
+	creds := WithdrawalCredentials(CompoundingWithdrawalPrefix, [20]byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20})
 
 	r, err := ComputeDepositMessageSigningRoot(core.MainNetwork, &phase0.DepositMessage{
 		PublicKey:             pk,
