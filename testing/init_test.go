@@ -153,6 +153,41 @@ func TestValidateInitMessage(t *testing.T) {
 			Amount:                uint64(crypto.MIN_ACTIVATION_BALANCE),
 		}), "threshold set is invalid")
 	})
+	t.Run("valid 32-byte 0x02 credentials", func(t *testing.T) {
+		require.NoError(t, spec.ValidateInitMessage(&spec.Init{
+			Operators:             fixtures.GenerateOperators(4),
+			T:                     3,
+			WithdrawalCredentials: fixtures.TestWithdrawalCred0x02,
+			Fork:                  fixtures.TestFork,
+			Owner:                 fixtures.TestOwnerAddress,
+			Nonce:                 0,
+			Amount:                uint64(crypto.MIN_ACTIVATION_BALANCE),
+		}))
+	})
+	t.Run("invalid 32-byte 0x03 prefix", func(t *testing.T) {
+		badCreds := make([]byte, 32)
+		badCreds[0] = 0x03
+		require.ErrorContains(t, spec.ValidateInitMessage(&spec.Init{
+			Operators:             fixtures.GenerateOperators(4),
+			T:                     3,
+			WithdrawalCredentials: badCreds,
+			Fork:                  fixtures.TestFork,
+			Owner:                 fixtures.TestOwnerAddress,
+			Nonce:                 0,
+			Amount:                uint64(crypto.MIN_ACTIVATION_BALANCE),
+		}), "invalid withdrawal credentials")
+	})
+	t.Run("invalid 15-byte credentials", func(t *testing.T) {
+		require.ErrorContains(t, spec.ValidateInitMessage(&spec.Init{
+			Operators:             fixtures.GenerateOperators(4),
+			T:                     3,
+			WithdrawalCredentials: make([]byte, 15),
+			Fork:                  fixtures.TestFork,
+			Owner:                 fixtures.TestOwnerAddress,
+			Nonce:                 0,
+			Amount:                uint64(crypto.MIN_ACTIVATION_BALANCE),
+		}), "invalid withdrawal credentials")
+	})
 	t.Run("amount < 32 ETH", func(t *testing.T) {
 		require.EqualError(t, spec.ValidateInitMessage(&spec.Init{
 			Operators:             fixtures.GenerateOperators(4),

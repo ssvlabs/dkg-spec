@@ -6,6 +6,8 @@ import (
 	"sort"
 
 	"github.com/attestantio/go-eth2-client/spec/phase0"
+
+	"github.com/ssvlabs/dkg-spec/crypto"
 )
 
 // ValidateReshareMessage returns nil if re-share message is valid
@@ -21,6 +23,9 @@ func ValidateReshareMessage(
 	// verify owner address
 	if !bytes.Equal(reshare.Owner[:], proof.Proof.Owner[:]) {
 		return fmt.Errorf("invalid owner address")
+	}
+	if err := crypto.ValidateWithdrawalCredentials(reshare.WithdrawalCredentials); err != nil {
+		return fmt.Errorf("invalid withdrawal credentials: %w", err)
 	}
 
 	if err := ValidateCeremonyProof(reshare.ValidatorPubKey, operator, *proof); err != nil {

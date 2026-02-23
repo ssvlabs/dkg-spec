@@ -122,7 +122,7 @@ func TestSignDeposit(t *testing.T) {
 	shareRoot, err := crypto.ComputeDepositMessageSigningRoot(network, &phase0.DepositMessage{
 		PublicKey:             phase0.BLSPubKey(ShareSK(TestValidator13Operators).GetPublicKey().Serialize()),
 		Amount:                crypto.MIN_ACTIVATION_BALANCE,
-		WithdrawalCredentials: crypto.ETH1WithdrawalCredentials(TestWithdrawalCred)})
+		WithdrawalCredentials: TestWithdrawalCred})
 	require.NoError(t, err)
 
 	sig := ShareSK(TestValidator13OperatorsShare1).SignByte(shareRoot[:])

@@ -241,10 +241,11 @@ func TestValidateResign(t *testing.T) {
 	t.Run("invalid proof", func(t *testing.T) {
 		require.EqualError(t, spec.ValidateResignMessage(
 			&spec.Resign{
-				ValidatorPubKey: fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
-				Owner:           fixtures.TestOwnerAddress,
-				Nonce:           1,
-				Amount:          uint64(crypto.MIN_ACTIVATION_BALANCE),
+				ValidatorPubKey:       fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+				WithdrawalCredentials: fixtures.TestWithdrawalCred,
+				Owner:                 fixtures.TestOwnerAddress,
+				Nonce:                 1,
+				Amount:                uint64(crypto.MIN_ACTIVATION_BALANCE),
 			},
 			fixtures.GenerateOperators(4)[0],
 			&fixtures.TestOperator2Proof4Operators,
