@@ -43,6 +43,36 @@ func TestBuildResult(t *testing.T) {
 	})
 }
 
+func TestVerifyCeremonyProofSignaturePath(t *testing.T) {
+	result, err := spec.BuildResult(
+		1,
+		fixtures.TestRequestID,
+		fixtures.ShareSK(fixtures.TestValidator4OperatorsShare1),
+		fixtures.OperatorSK(fixtures.TestOperator1SK),
+		fixtures.ShareSK(fixtures.TestValidator4Operators).GetPublicKey().Serialize(),
+		fixtures.TestOwnerAddress,
+		fixtures.TestWithdrawalCred,
+		fixtures.TestFork,
+		fixtures.TestNonce,
+		fixtures.TestAmount,
+	)
+	require.NoError(t, err)
+
+	require.NoError(t, spec.VerifyCeremonyProof(fixtures.GenerateOperators(4)[0].PubKey, result.SignedProof))
+
+	proofBytes, err := result.SignedProof.Proof.MarshalSSZ()
+	require.NoError(t, err)
+
+	marshalSignedProof := result.SignedProof
+	marshalSignedProof.Signature, err = spec_crypto.SignRSA(fixtures.OperatorSK(fixtures.TestOperator1SK), proofBytes)
+	require.NoError(t, err)
+
+	require.ErrorContains(t,
+		spec.VerifyCeremonyProof(fixtures.GenerateOperators(4)[0].PubKey, marshalSignedProof),
+		"crypto/rsa: verification error",
+	)
+}
+
 func TestValidateResults(t *testing.T) {
 	t.Run("valid 3 out of 4 operators", func(t *testing.T) {
 		_, _, _, err := spec.ValidateResults(
