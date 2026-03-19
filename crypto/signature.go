@@ -60,11 +60,11 @@ func VerifySignedMessageByOwner(
 		}
 		res, err := signerVerification.IsValidSignature(&bind.CallOpts{
 			Context: context.Background(),
-		}, hash[:], signature)
+		}, hash, signature)
 		if err != nil {
 			return err
 		}
-		if bytes.Equal(eip1271.MAGIC_VALUE_PERSONAL_SIGN[:], res[:]) || bytes.Equal(eip1271.MAGIC_VALUE_ETH_SIGN[:], res[:]) {
+		if bytes.Equal(eip1271.MAGIC_VALUE[:], res[:]) {
 			return nil
 		}
 		return fmt.Errorf("invalid eip1271 signature")

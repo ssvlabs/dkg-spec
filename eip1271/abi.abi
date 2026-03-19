@@ -3,8 +3,8 @@
     "constant": true,
     "inputs": [
       {
-        "name": "_data",
-        "type": "bytes"
+        "name": "_hash",
+        "type": "bytes32"
       },
       {
         "name": "_signature",
