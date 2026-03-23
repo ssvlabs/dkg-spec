@@ -28,47 +28,18 @@ func (op *Operator) Init(
 	*/
 
 	// sign deposit data
-	depositDataRoot, err := crypto.DepositDataRootForFork(
-		init.Fork,
+	return BuildResult(
+		op.ID,
+		requestID,
+		share,
+		sk,
 		validatorPK,
+		init.Owner,
 		init.WithdrawalCredentials,
+		init.Fork,
+		init.Nonce,
 		phase0.Gwei(init.Amount),
 	)
-	if err != nil {
-		return nil, err
-	}
-	depositDataSig := share.SignByte(depositDataRoot[:])
-
-	// sign proof
-	encryptedShare, err := crypto.Encrypt(&sk.PublicKey, []byte(share.SerializeToHexStr()))
-	if err != nil {
-		return nil, err
-	}
-	proof := &Proof{
-		ValidatorPubKey: validatorPK,
-		EncryptedShare:  encryptedShare,
-		SharePubKey:     share.GetPublicKey().Serialize(),
-		Owner:           init.Owner,
-	}
-	byts, err := proof.MarshalSSZ()
-	if err != nil {
-		return nil, err
-	}
-	proofSig, err := crypto.SignRSA(sk, byts)
-	if err != nil {
-		return nil, err
-	}
-
-	return &Result{
-		OperatorID:                 op.ID,
-		RequestID:                  requestID,
-		DepositPartialSignature:    depositDataSig.Serialize(),
-		OwnerNoncePartialSignature: share.SignByte(PartialNonceRoot(init.Owner, init.Nonce)).Serialize(),
-		SignedProof: SignedProof{
-			Proof:     proof,
-			Signature: proofSig,
-		},
-	}, nil
 }
 
 // Reshare is called when an operator receives a reshare message
