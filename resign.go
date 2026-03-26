@@ -1,6 +1,7 @@
 package spec
 
 import (
+	"bytes"
 	"fmt"
 
 	"github.com/attestantio/go-eth2-client/spec/phase0"
@@ -14,6 +15,9 @@ func ValidateResignMessage(
 	operator *Operator,
 	proof *SignedProof,
 ) error {
+	if !bytes.Equal(resign.Owner[:], proof.Proof.Owner[:]) {
+		return fmt.Errorf("invalid owner address")
+	}
 	if !ValidAmountSet(phase0.Gwei(resign.Amount)) {
 		return fmt.Errorf("amount should be in range between 32 ETH and 2048 ETH")
 	}
