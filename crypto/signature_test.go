@@ -121,6 +121,8 @@ func TestVerifySignedReshare(t *testing.T) {
 
 		stubClient := &stubs.Client{
 			CallContractF: func(call ethereum.CallMsg) ([]byte, error) {
+				require.Equal(t, []byte{0x16, 0x26, 0xba, 0x7e}, call.Data[:4], "wrong EIP-1271 selector")
+
 				ret := make([]byte, 32) // needs to be 32 byte for packing
 				copy(ret[:4], eip1271.MAGIC_VALUE[:])
 
@@ -151,6 +153,8 @@ func TestVerifySignedReshare(t *testing.T) {
 
 		stubClient := &stubs.Client{
 			CallContractF: func(call ethereum.CallMsg) ([]byte, error) {
+				require.Equal(t, []byte{0x16, 0x26, 0xba, 0x7e}, call.Data[:4], "wrong EIP-1271 selector")
+
 				ret := make([]byte, 32) // needs to be 32 byte for packing
 				copy(ret[:4], eip1271.InvalidSigValue[:])
 
