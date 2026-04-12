@@ -11,13 +11,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.2
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v6.3.0
         with:
           go-version: '1.21'
       - name: Install abigen
-        uses: gacts/install-geth-tools@v1
+        uses: gacts/install-geth-tools@v1.2.6
         with:
           tools: abigen
       - name: Generate
